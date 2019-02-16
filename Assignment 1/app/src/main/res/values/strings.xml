@@ -1,0 +1,16 @@
+<resources>
+    <string name="app_name">Assignment 1</string>
+    <string name="reset_button">Reset Counters</string>
+    <string name="reset_button_land">Reset\nCounters</string>
+    <string name="initial_count">0</string>
+    <string name="start_text">onStart</string>
+    <string name="pause_text">onPause</string>
+    <string name="restart_text">onRestart</string>
+    <string name="create_text">onCreate</string>
+    <string name="stop_text">onStop</string>
+    <string name="destroy_text">onDestroy</string>
+    <string name="resume_text">onResume</string>
+    <string name="restore_instance_text">onRestoreInstanceState</string>
+    <string name="save_instance_text">onSaveInstanceState</string>
+    <string name="header">Activity Lifecycle Counter</string>
+</resources>

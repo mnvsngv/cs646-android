@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+
+    <TextView
+        android:id="@+id/header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/header"
+        android:textColor="#000"
+        android:textSize="32sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TableLayout
+        android:id="@+id/textTable"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:padding="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/reset_button"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDD">
+
+            <TextView
+                android:id="@+id/onStartText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/start_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onStartCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#CCC">
+
+            <TextView
+                android:id="@+id/onPauseText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/pause_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onPauseCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDD">
+
+            <TextView
+                android:id="@+id/onRestartText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/restart_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onRestartCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#CCC">
+
+            <TextView
+                android:id="@+id/onCreateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/create_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onCreateCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDD">
+
+            <TextView
+                android:id="@+id/onStopText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/stop_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onStopCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#CCC">
+
+            <TextView
+                android:id="@+id/onDestroyText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/destroy_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onDestroyCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDD">
+
+            <TextView
+                android:id="@+id/onResumeText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/resume_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onResumeCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#CCC">
+
+            <TextView
+                android:id="@+id/onSaveInstanceStateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/save_instance_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onSaveInstanceCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+
+        <TableRow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="#DDD">
+
+            <TextView
+                android:id="@+id/onRestoreInstanceStateText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/restore_instance_text"
+                android:textAlignment="textEnd"
+                android:textColor="#000"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/onRestoreInstanceCount"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="5"
+                android:text="@string/initial_count"
+                android:textAlignment="center"
+                android:textColor="#000"
+                android:textSize="20sp" />
+        </TableRow>
+    </TableLayout>
+
+    <Button
+        android:id="@+id/reset_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/reset_button_land"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/textTable"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

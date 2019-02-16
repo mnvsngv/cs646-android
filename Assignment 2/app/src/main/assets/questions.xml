@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<questions>
+    <question>
+        <text>Where did 2018 rank in terms of Earth’s average surface temperature?</text>
+        <option>First</option>
+        <option>Fourth</option>
+        <option tag="answer">Eighth</option>
+        <option>Tenth</option>
+    </question>
+    <question>
+        <text>Which countries signed the 1987 Intermediate-Range Nuclear Forces Treaty?</text>
+        <option>Britain, China, France, Russia and the U.S.</option>
+        <option>China, India, Russia and the U.S.</option>
+        <option>China, Russia and the U.S.</option>
+        <option tag="answer">Russia and the U.S.</option>
+    </question>
+    <question>
+        <text>Nayid Bukele was elected president of which country?</text>
+        <option tag="answer">El Salvador</option>
+        <option>Honduras</option>
+        <option>Nicaragua</option>
+        <option>Panama</option>
+    </question>
+    <question>
+        <text>How many combined points did the teams score in the last Super Bowl?</text>
+        <option>7</option>
+        <option>10</option>
+        <option tag="answer">16</option>
+        <option>21</option>
+    </question>
+</questions>

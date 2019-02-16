@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent"
+             tools:context=".fragments.QuestionFragment" android:id="@+id/questionFragmentContainer">
+
+    <!-- TODO: Update blank fragment layout -->
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/questionText"
+                app:layout_constraintStart_toStartOf="parent" app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                android:text="@string/question_placeholder" android:textAlignment="center"
+                android:textSize="@dimen/question_size"
+                android:textColor="#000" android:padding="@dimen/form_margins"/>
+        <RadioGroup
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@+id/questionText" app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent" android:layout_margin="@dimen/form_margins"
+                android:id="@+id/optionsGroup">
+            <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/radioButton1" android:layout_weight="1"
+                    android:onClick="onRadioButtonClicked" android:tag="1"
+                    android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
+                    android:textSize="@dimen/option_text_size"/>
+            <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/radioButton2" android:layout_weight="1"
+                    android:onClick="onRadioButtonClicked" android:tag="2"
+                    android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
+                    android:textSize="@dimen/option_text_size"/>
+            <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/radioButton3" android:layout_weight="1"
+                    android:onClick="onRadioButtonClicked" android:tag="3"
+                    android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
+                    android:textSize="@dimen/option_text_size"/>
+            <RadioButton
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" android:id="@+id/radioButton4" android:layout_weight="1"
+                    android:onClick="onRadioButtonClicked" android:tag="4"
+                    android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
+                    android:textSize="@dimen/option_text_size"/>
+        </RadioGroup>
+    </android.support.constraint.ConstraintLayout>
+
+</FrameLayout>

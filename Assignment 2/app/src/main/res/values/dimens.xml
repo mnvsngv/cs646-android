@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="form_margins">10sp</dimen>
+    <dimen name="result_size">20sp</dimen>
+    <dimen name="quiz_options_margin">5sp</dimen>
+    <dimen name="question_size">20sp</dimen>
+    <dimen name="option_text_size">18sp</dimen>
+    <dimen name="button_text_size">16sp</dimen>
+</resources>
