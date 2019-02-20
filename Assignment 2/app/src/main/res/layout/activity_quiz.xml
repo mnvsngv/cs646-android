@@ -10,15 +10,15 @@
     <FrameLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/questionFragmentContainer" app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/questionFragment" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" app:layout_constraintBottom_toBottomOf="parent"
-            android:layout_margin="@dimen/form_margins"/>
+            android:layout_margin="@dimen/form_margins" android:tag="questionFragmentContainer"/>
     <Button
             android:text="@string/next_question_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/nextQuestionButton"
             app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/questionFragmentContainer" android:visibility="invisible"
+            app:layout_constraintTop_toBottomOf="@+id/questionFragment" android:visibility="invisible"
             android:textSize="@dimen/button_text_size"/>
 </android.support.constraint.ConstraintLayout>

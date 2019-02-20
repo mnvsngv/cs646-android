@@ -3,7 +3,6 @@ package com.mnvsngv.assignment2.fragments
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -30,8 +29,6 @@ class QuestionFragment : Fragment() {
         arguments?.let {
             question = it.getSerializable(QUESTION_PARAM) as Question
         }
-
-        if (savedInstanceState != null) checkedRadioButtonId = savedInstanceState.getInt(CHECKED_RADIO_BUTTON_KEY)
     }
 
     override fun onCreateView(
@@ -43,29 +40,20 @@ class QuestionFragment : Fragment() {
 
         fragmentView.questionText.text = question?.question
 
-        fragmentView.radioButton1.text = question?.options?.get(0) ?: "Default"
-        fragmentView.radioButton1.onClick {
-            if (it != null) onRadioButtonChecked(it)
-        }
+        // Set up all the radio buttons in our options
+        for (i in 0 until fragmentView.optionsGroup.childCount) {
+            val radioButton = fragmentView.optionsGroup.getChildAt(i) as RadioButton
 
-        fragmentView.radioButton2.text = question?.options?.get(1) ?: "Default"
-        fragmentView.radioButton2.onClick {
-            if (it != null) onRadioButtonChecked(it)
-        }
-
-        fragmentView.radioButton3.text = question?.options?.get(2) ?: "Default"
-        fragmentView.radioButton3.onClick {
-            if (it != null) onRadioButtonChecked(it)
-        }
-
-        fragmentView.radioButton4.text = question?.options?.get(3) ?: "Default"
-        fragmentView.radioButton4.onClick {
-            if (it != null) onRadioButtonChecked(it)
+            radioButton.text = question?.options?.get(i) ?: "Default"
+            radioButton.onClick {
+                if (it != null) onRadioButtonChecked(it)
+            }
         }
 
         return fragmentView
     }
 
+    // Store the user's selection & update the parent activity
     private fun onRadioButtonChecked(radioButton: View) {
         answer = radioButton.tag.toString().toInt()
         listener?.onOptionSelect()
@@ -79,22 +67,21 @@ class QuestionFragment : Fragment() {
         }
     }
 
+    // Need to save the user's selection
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(CHECKED_RADIO_BUTTON_KEY, checkedRadioButtonId)
     }
 
+    // The Fragment equivalent of onRestoreInstanceState: need to restore the user's radio button selection here
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
         if (savedInstanceState != null) {
-            Log.i("tag", "Hey.")
             checkedRadioButtonId = savedInstanceState.getInt(CHECKED_RADIO_BUTTON_KEY)
             if (checkedRadioButtonId != -1) {
-                Log.i("tag", "Sup.")
                 optionsGroup.clearCheck()
                 val checkedRadioButton = view?.findViewById<RadioButton>(checkedRadioButtonId)
-//                view?.fragmentView.optionsGroup.clearCheck()
                 checkedRadioButton?.isChecked = true
                 onRadioButtonChecked(checkedRadioButton as RadioButton)
             }

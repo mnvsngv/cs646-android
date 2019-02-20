@@ -3,14 +3,13 @@ package com.mnvsngv.assignment2.activities
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.text.SpannableString
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.View
+import android.widget.Toast
 import com.mnvsngv.assignment2.R
 import kotlinx.android.synthetic.main.activity_form.*
-
 import org.jetbrains.anko.startActivityForResult
 import org.json.JSONException
 import org.json.JSONObject
@@ -33,33 +32,38 @@ class FormActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_form)
 
-        getUserInformation()
+        retrieveUserInformation()
 
         submitFormButton.setOnClickListener {
-            if (areValidTextInputs()) {
+            if (areValidTextInputs()) {  // If the user has filled all form fields, start the quiz
                 saveUserInformation(resultTextValue.text.toString())
                 startActivityForResult<QuizActivity>(INTENT_REQUEST)
             }
         }
     }
 
+    // Save user info
     override fun onDestroy() {
         super.onDestroy()
         saveUserInformation(resultTextValue.text.toString())
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode != INTENT_REQUEST) {
+        if (requestCode != INTENT_REQUEST) {  // Ensure this is for the intended intent!
             return
         }
         when (resultCode) {
-            Activity.RESULT_OK -> {
+            Activity.RESULT_OK -> {  // Show the score from the received intent
                 val correctAnswers = data?.getIntExtra("result", 0)
                 if (correctAnswers != null) showScore(correctAnswers.toString())
+            }
+            Activity.RESULT_CANCELED -> {  // Show a toast to indicate the quiz was cancelled
+                Toast.makeText(this, "Come back to the quiz again soon!", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
+    // Validates that the user has filled in all the fields
     private fun areValidTextInputs(): Boolean {
         var isValid = true
 
@@ -83,6 +87,7 @@ class FormActivity : AppCompatActivity() {
         return isValid
     }
 
+    // Save user info to file
     private fun saveUserInformation(score: String) {
         val firstName = firstNameInput.text.toString()
         val familyName = familyNameInput.text.toString()
@@ -101,7 +106,8 @@ class FormActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUserInformation() {
+    // Restore user info from file
+    private fun retrieveUserInformation() {
         if (File(filesDir, USER_INFO_FILE_NAME).exists()) {
             openFileInput(USER_INFO_FILE_NAME).use {
                 val jsonDataString = String(it.readBytes())
@@ -126,6 +132,7 @@ class FormActivity : AppCompatActivity() {
         }
     }
 
+    // Convenience method to update the score on the UI
     private fun showScore(score: String) {
         resultTextValue.text = score
         resultTextLabel.visibility = View.VISIBLE

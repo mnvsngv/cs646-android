@@ -1,62 +1,73 @@
 package com.mnvsngv.assignment2.activities
 
 import android.app.Activity
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.util.Xml
 import android.view.View
-import android.widget.Toast
-import com.mnvsngv.assignment2.fragments.QuestionFragment
 import com.mnvsngv.assignment2.R
 import com.mnvsngv.assignment2.data_classes.Question
+import com.mnvsngv.assignment2.fragments.QuestionFragment
 import kotlinx.android.synthetic.main.activity_quiz.*
 import org.xmlpull.v1.XmlPullParser
 import java.io.InputStreamReader
 
 
 private const val QUESTIONS_FILE_PATH = "questions.xml"
+private const val QUESTION_FRAGMENT_TAG = "questionFragment"
 private const val PARSER_CURRENT_LINE_KEY = "parserLine"
 private const val QUESTION_KEY = "question"
 private const val CORRECT_ANSWERS_KEY = "correctAnswers"
 
 
 class QuizActivity : AppCompatActivity(), QuestionFragment.QuestionFragmentListener {
+
     private val parser: XmlPullParser = Xml.newPullParser()
     private var correctAnswers = 0
     private var currentQuestion: Question? = Question()
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_quiz)
 
+        // We're going to parse the questions file with an XmlPullParser so set its input
         parser.setInput(InputStreamReader(assets.open(QUESTIONS_FILE_PATH)))
         var currentFragment: QuestionFragment
 
-        if (savedInstanceState != null) {
-            val previousLineNumber = savedInstanceState.getInt(PARSER_CURRENT_LINE_KEY)
-            while (parser.lineNumber < previousLineNumber) parser.next()
-            currentFragment = supportFragmentManager.fragments[0] as QuestionFragment
+        if (savedInstanceState != null) {  // we need to restore the current question into the existing fragment
+            val previousParserLine = savedInstanceState.getInt(PARSER_CURRENT_LINE_KEY)
+
+            // Move the XmlPullParser to the line number that it was at previously
+            while (parser.lineNumber < previousParserLine) {
+                parser.next()
+            }
+
+            // Now restore the rest of the values that the activity needs to track its current state
+            currentFragment = supportFragmentManager.findFragmentByTag(QUESTION_FRAGMENT_TAG) as QuestionFragment
             correctAnswers = savedInstanceState.getInt(CORRECT_ANSWERS_KEY)
             currentQuestion = savedInstanceState.getSerializable(QUESTION_KEY) as Question
-        } else {
+
+        } else {  // No bundle, so we have to create a new fragment with a new question
             currentQuestion = parseForNextQuestion()
             currentFragment = QuestionFragment.newInstance(currentQuestion as Question)
-            setFragment(currentFragment)
+            setQuestionFragment(currentFragment)
         }
 
         nextQuestionButton.setOnClickListener {
-            val answer = currentFragment.getSelectedAnswer()
+            val answer = currentFragment.getSelectedAnswer()  // Get what the user selected
 
-            if (answer == currentQuestion?.answer) {
+            if (answer == currentQuestion?.answer) {  // Record the answer as necessary
                 correctAnswers++
             }
 
+            // Try to get a new question
             currentQuestion = parseForNextQuestion()
-            if (currentQuestion != null) {
+            if (currentQuestion != null) {  // We've got a new question so put it into a new fragment & display
                 currentFragment = QuestionFragment.newInstance(currentQuestion as Question)
-                setFragment(currentFragment)
+                setQuestionFragment(currentFragment)
                 nextQuestionButton.visibility = View.INVISIBLE
-            } else {
+            } else {  // We're done with all questions so send back the results to the calling activity
                 val intentToPass = intent
                 intentToPass.putExtra("result", correctAnswers)
                 setResult(Activity.RESULT_OK, intentToPass)
@@ -73,16 +84,19 @@ class QuizActivity : AppCompatActivity(), QuestionFragment.QuestionFragmentListe
     }
 
     override fun onBackPressed() {
-        Toast.makeText(this, "You need to finish the quiz!", Toast.LENGTH_SHORT).show()
+        setResult(Activity.RESULT_CANCELED, null)
+        finish()
     }
 
     override fun onOptionSelect() {
         nextQuestionButton.visibility = View.VISIBLE
     }
 
-    private fun setFragment(fragment: QuestionFragment) {
+
+    // Convenience method to replace the activity's existing fragment with a new instance
+    private fun setQuestionFragment(fragment: QuestionFragment) {
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.questionFragmentContainer, fragment)
+        transaction.replace(R.id.questionFragment, fragment, QUESTION_FRAGMENT_TAG)
         transaction.commit()
     }
 

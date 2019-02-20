@@ -3,7 +3,8 @@
              xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools"
              android:layout_width="match_parent"
              android:layout_height="match_parent"
-             tools:context=".fragments.QuestionFragment" android:id="@+id/questionFragmentContainer">
+             tools:context=".fragments.QuestionFragment" android:id="@+id/questionFragment"
+             android:tag="questionFragment">
 
     <!-- TODO: Update blank fragment layout -->
     <android.support.constraint.ConstraintLayout
@@ -27,25 +28,25 @@
             <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/radioButton1" android:layout_weight="1"
-                    android:onClick="onRadioButtonClicked" android:tag="1"
+                    android:tag="1"
                     android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
                     android:textSize="@dimen/option_text_size"/>
             <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/radioButton2" android:layout_weight="1"
-                    android:onClick="onRadioButtonClicked" android:tag="2"
+                    android:tag="2"
                     android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
                     android:textSize="@dimen/option_text_size"/>
             <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/radioButton3" android:layout_weight="1"
-                    android:onClick="onRadioButtonClicked" android:tag="3"
+                    android:tag="3"
                     android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
                     android:textSize="@dimen/option_text_size"/>
             <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content" android:id="@+id/radioButton4" android:layout_weight="1"
-                    android:onClick="onRadioButtonClicked" android:tag="4"
+                    android:tag="4"
                     android:layout_margin="@dimen/quiz_options_margin" android:textColor="#000"
                     android:textSize="@dimen/option_text_size"/>
         </RadioGroup>
