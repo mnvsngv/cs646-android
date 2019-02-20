@@ -3,12 +3,14 @@ package com.mnvsngv.assignment2.fragments
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.RadioButton
 import com.mnvsngv.assignment2.R
 import com.mnvsngv.assignment2.data_classes.Question
+import kotlinx.android.synthetic.main.fragment_question.*
 import kotlinx.android.synthetic.main.fragment_question.view.*
 import org.jetbrains.anko.sdk27.coroutines.onClick
 
@@ -28,6 +30,8 @@ class QuestionFragment : Fragment() {
         arguments?.let {
             question = it.getSerializable(QUESTION_PARAM) as Question
         }
+
+        if (savedInstanceState != null) checkedRadioButtonId = savedInstanceState.getInt(CHECKED_RADIO_BUTTON_KEY)
     }
 
     override fun onCreateView(
@@ -59,23 +63,13 @@ class QuestionFragment : Fragment() {
             if (it != null) onRadioButtonChecked(it)
         }
 
-        if (savedInstanceState != null) {
-            checkedRadioButtonId = savedInstanceState.getInt(CHECKED_RADIO_BUTTON_KEY)
-            if (checkedRadioButtonId != -1) {
-                val checkedRadioButton = fragmentView.findViewById<RadioButton>(checkedRadioButtonId)
-                fragmentView.optionsGroup.clearCheck()
-                checkedRadioButton.isChecked = true
-                onRadioButtonChecked(checkedRadioButton as RadioButton)
-            }
-        }
-
         return fragmentView
     }
 
-    private fun onRadioButtonChecked(view: View) {
-        answer = view.tag.toString().toInt()
+    private fun onRadioButtonChecked(radioButton: View) {
+        answer = radioButton.tag.toString().toInt()
         listener?.onOptionSelect()
-        checkedRadioButtonId = view.id
+        checkedRadioButtonId = radioButton.id
     }
 
     override fun onAttach(context: Context?) {
@@ -88,6 +82,23 @@ class QuestionFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         outState.putInt(CHECKED_RADIO_BUTTON_KEY, checkedRadioButtonId)
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        if (savedInstanceState != null) {
+            Log.i("tag", "Hey.")
+            checkedRadioButtonId = savedInstanceState.getInt(CHECKED_RADIO_BUTTON_KEY)
+            if (checkedRadioButtonId != -1) {
+                Log.i("tag", "Sup.")
+                optionsGroup.clearCheck()
+                val checkedRadioButton = view?.findViewById<RadioButton>(checkedRadioButtonId)
+//                view?.fragmentView.optionsGroup.clearCheck()
+                checkedRadioButton?.isChecked = true
+                onRadioButtonChecked(checkedRadioButton as RadioButton)
+            }
+        }
     }
 
     fun getSelectedAnswer(): Int {

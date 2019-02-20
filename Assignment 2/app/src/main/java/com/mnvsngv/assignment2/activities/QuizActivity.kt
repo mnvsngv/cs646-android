@@ -30,17 +30,16 @@ class QuizActivity : AppCompatActivity(), QuestionFragment.QuestionFragmentListe
         setContentView(R.layout.activity_quiz)
 
         parser.setInput(InputStreamReader(assets.open(QUESTIONS_FILE_PATH)))
+        var currentFragment: QuestionFragment
+
         if (savedInstanceState != null) {
             val previousLineNumber = savedInstanceState.getInt(PARSER_CURRENT_LINE_KEY)
             while (parser.lineNumber < previousLineNumber) parser.next()
-            currentQuestion = savedInstanceState.getSerializable(QUESTION_KEY) as Question
+            currentFragment = supportFragmentManager.fragments[0] as QuestionFragment
             correctAnswers = savedInstanceState.getInt(CORRECT_ANSWERS_KEY)
+            currentQuestion = savedInstanceState.getSerializable(QUESTION_KEY) as Question
         } else {
             currentQuestion = parseForNextQuestion()
-        }
-        var currentFragment = QuestionFragment()
-
-        if (currentQuestion != null) {
             currentFragment = QuestionFragment.newInstance(currentQuestion as Question)
             setFragment(currentFragment)
         }
