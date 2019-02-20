@@ -45,12 +45,11 @@
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="number"
             android:ems="10"
             android:id="@+id/ageInput" app:layout_constraintTop_toBottomOf="@+id/nicknameInput"
             android:hint="@string/age_input" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintHorizontal_bias="0.5" app:layout_constraintEnd_toEndOf="parent"
-            android:layout_margin="@dimen/form_margins" android:numeric="integer"/>
+            android:layout_margin="@dimen/form_margins" android:inputType="number"/>
     <Button
             android:text="@string/submit_form_button"
             android:layout_width="wrap_content"

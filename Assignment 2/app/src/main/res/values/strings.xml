@@ -8,7 +8,6 @@
     <string name="form_header_text">Personal Information Form</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="question_placeholder">Question goes here…</string>
     <string name="next_question_button">Next Question</string>
     <string name="result_text_label">Your last score:</string>
