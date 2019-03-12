@@ -32,7 +32,7 @@ class GameView : View, View.OnTouchListener {
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
         super.onLayout(changed, left, top, right, bottom)
         playerX = width / 2f
-        playerY = height * 0.8f
+        playerY = height * 0.9f
     }
 
     override fun onDraw(canvas: Canvas?) {
@@ -46,7 +46,7 @@ class GameView : View, View.OnTouchListener {
             isInMotion = false
         } else if(!isInMotion) {
             task = scheduler.scheduleAtFixedRate({ move(directionToMove) },
-                0, 10, TimeUnit.MILLISECONDS
+                0, 100, TimeUnit.MICROSECONDS
             )
             isInMotion = true
         }
@@ -61,12 +61,12 @@ class GameView : View, View.OnTouchListener {
         motionDirection = directionToMove
         if (motionDirection == Direction.RIGHT) {
             if (playerX + playerRadius < width) {
-                playerX += 5f
+                playerX += 0.1f
             }
         }
         else {
             if (playerX - playerRadius > 0) {
-                playerX -= 5f
+                playerX -= 0.1f
             }
         }
         invalidate()
@@ -103,5 +103,7 @@ class GameView : View, View.OnTouchListener {
             Direction.LEFT
         }
     }
+
+
 
 }
