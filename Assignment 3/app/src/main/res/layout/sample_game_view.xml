@@ -4,7 +4,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-    <com.mnvsngv.assignment3.view.GameView
+    <com.mnvsngv.assignment3.views.GameView
             android:background="#ccc"
             android:layout_width="match_parent"
             android:layout_height="match_parent"

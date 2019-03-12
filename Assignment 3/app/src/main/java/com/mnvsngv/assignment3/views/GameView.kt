@@ -1,4 +1,4 @@
-package com.mnvsngv.assignment3.view
+package com.mnvsngv.assignment3.views
 
 import android.content.Context
 import android.graphics.Canvas
