@@ -30,6 +30,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private var resetDistance = 0f
     private var numInvisible = 0
     private var listener: MainActivity.GameBarListener? = null
+    var isPaused = false
 
     override fun init(view: View, width: Int, height: Int, listener: MainActivity.GameBarListener?) {
         this.view = view
@@ -50,37 +51,39 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     }
 
     override fun drawOn(canvas: Canvas?) {
-        canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
+        if (!isPaused) {
+            canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
 
-        for (obstacle in obstacles) {
-            if (obstacle.visible && !obstacle.hasHitPlayer) {
-                canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
-            }
-            obstacle.centreY += obstacle.velocity
-
-            if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {
-                listener?.decreaseLife()
-                obstacle.hasHitPlayer = true
-            }
-
-            if (obstacle.visible && (obstacle.centreY - obstacle.radius) > height) {
-                numInvisible++
-                obstacle.visible = false
-                listener?.increaseScore()
-                obstacle.hasHitPlayer = false
-            }
-        }
-
-        if (numInvisible == obstacles.size) {
             for (obstacle in obstacles) {
-                obstacle.visible = true
-                obstacle.centreY -= (height + resetDistance)
-                obstacle.velocity *= 1.25f
-            }
-            numInvisible = 0
-        }
+                if (obstacle.visible && !obstacle.hasHitPlayer) {
+                    canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
+                }
+                obstacle.centreY += obstacle.velocity
 
-        view?.invalidate()
+                if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {
+                    listener?.decreaseLife()
+                    obstacle.hasHitPlayer = true
+                }
+
+                if (obstacle.visible && (obstacle.centreY - obstacle.radius) > height) {
+                    numInvisible++
+                    obstacle.visible = false
+                    listener?.increaseScore()
+                    obstacle.hasHitPlayer = false
+                }
+            }
+
+            if (numInvisible == obstacles.size) {
+                for (obstacle in obstacles) {
+                    obstacle.visible = true
+                    obstacle.centreY -= (height + resetDistance)
+                    obstacle.velocity *= 1.25f
+                }
+                numInvisible = 0
+            }
+
+            view?.invalidate()
+        }
     }
 
     override fun handleTouch(event: MotionEvent): Boolean {

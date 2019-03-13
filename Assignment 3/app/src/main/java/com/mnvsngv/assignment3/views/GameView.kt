@@ -72,4 +72,19 @@ class GameView : View, View.OnTouchListener {
         invalidate()
     }
 
+    fun onPauseButtonPressed() {
+        if (currentState is PlayState) {
+            val playState: PlayState = currentState as PlayState
+            if (playState.isPaused) {
+                playState.isPaused = false
+                listener?.setPauseButtonText(context.getString(R.string.pause))
+                invalidate()
+            } else {
+                playState.isPaused = true
+                listener?.setPauseButtonText(context.getString(R.string.resume))
+            }
+
+        }
+    }
+
 }

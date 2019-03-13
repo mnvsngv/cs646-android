@@ -19,6 +19,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         mainButton.setOnClickListener { gameView.onMainButtonPressed() }
+        pauseButton.setOnClickListener { gameView.onPauseButtonPressed() }
+
         gameView.setListener(object: GameBarListener {
             override fun increaseScore() {
                 score++
@@ -41,6 +43,7 @@ class MainActivity : AppCompatActivity() {
             override fun reset() {
                 scoreView.text = getString(R.string.default_score)
                 livesView.text = getString(R.string.default_lives)
+                pauseButton.text = getString(R.string.pause)
                 score = 0
                 lives = 3
             }

@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content" android:id="@+id/scoreView"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/pauseButton"
-                app:layout_constraintLeft_toRightOf="@+id/scoreTextView" app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintLeft_toRightOf="@+id/scoreTextView" app:layout_constraintHorizontal_weight="0.5"
                 android:textColor="#000" android:textSize="@dimen/text_size"/>
         <Button
                 android:text="@string/pause"
@@ -47,7 +47,7 @@
                 android:layout_height="wrap_content" android:id="@+id/pauseButton"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/mainButton"
-                app:layout_constraintLeft_toRightOf="@+id/scoreView" app:layout_constraintHorizontal_weight="2.5"
+                app:layout_constraintLeft_toRightOf="@+id/scoreView" app:layout_constraintHorizontal_weight="3.5"
                 android:textSize="@dimen/text_size"/>
         <Button
                 android:text="@string/start_game"
@@ -55,7 +55,7 @@
                 android:layout_height="wrap_content" android:id="@+id/mainButton"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintRight_toLeftOf="@+id/livesTextView"
-                app:layout_constraintLeft_toRightOf="@+id/pauseButton" app:layout_constraintHorizontal_weight="2.5"
+                app:layout_constraintLeft_toRightOf="@+id/pauseButton" app:layout_constraintHorizontal_weight="3.5"
                 android:textSize="@dimen/text_size"/>
         <TextView
                 android:text="@string/lives"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content" android:id="@+id/livesView"
                 app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintLeft_toRightOf="@+id/livesTextView" app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintHorizontal_weight="1" android:textColor="#000"
+                app:layout_constraintHorizontal_weight="0.5" android:textColor="#000"
                 android:textSize="@dimen/text_size"/>
     </android.support.constraint.ConstraintLayout>
 </android.support.constraint.ConstraintLayout>
