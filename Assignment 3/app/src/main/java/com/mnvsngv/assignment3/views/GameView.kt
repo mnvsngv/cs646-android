@@ -2,13 +2,15 @@ package com.mnvsngv.assignment3.views
 
 import android.content.Context
 import android.graphics.Canvas
-import android.graphics.Paint
 import android.util.AttributeSet
 import android.view.View
 import android.view.MotionEvent
+import android.widget.Toast
 import com.mnvsngv.assignment3.MainActivity
+import com.mnvsngv.assignment3.R
 import com.mnvsngv.assignment3.views.states.DrawState
 import com.mnvsngv.assignment3.views.states.GameState
+import com.mnvsngv.assignment3.views.states.NewGameState
 import com.mnvsngv.assignment3.views.states.PlayState
 
 
@@ -40,16 +42,31 @@ class GameView : View, View.OnTouchListener {
     override fun onTouch(v: View, event: MotionEvent): Boolean {
         if (currentState != null)
             return (currentState as GameState).handleTouch(event)
-        return false
+        return true
     }
 
     fun onMainButtonPressed() {
         when (currentState?.state()) {
-            GameState.StateConstants.DRAW -> {
+            GameState.Constants.DRAW -> {
                 val circles = (currentState as DrawState).circles
-                currentState = PlayState(circles)
+                if (circles.size == 0) {
+                    Toast.makeText(context, context.getString(R.string.obstacle_warning), Toast.LENGTH_SHORT).show()
+                } else {
+                    currentState = PlayState(circles)
+                    listener?.setMainButtonText(context.getString(R.string.end_game))
+                }
             }
-            GameState.StateConstants.PLAY -> currentState = DrawState()
+
+            GameState.Constants.PLAY -> {
+                currentState = NewGameState()
+                listener?.reset()
+                listener?.setMainButtonText(context.getString(R.string.new_game))
+            }
+
+            GameState.Constants.NEW -> {
+                currentState = DrawState()
+                listener?.setMainButtonText(context.getString(R.string.start_game))
+            }
         }
         currentState?.init(this, width, height, listener)
         invalidate()

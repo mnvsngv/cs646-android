@@ -11,7 +11,7 @@ import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
 
-class DrawState: GameState {
+class DrawState : GameState {
 
     private var view: View? = null
     private val scheduler = Executors.newScheduledThreadPool(1)
@@ -44,15 +44,15 @@ class DrawState: GameState {
         return false
     }
 
-    override fun state(): GameState.StateConstants {
-        return GameState.StateConstants.DRAW
+    override fun state(): GameState.Constants {
+        return GameState.Constants.DRAW
     }
 
     private fun drawCircle(event: MotionEvent) {
-        val newCircle = Obstacle(event.x, event.y, 0f, 5f, true)
+        val newCircle = Obstacle(event.x, event.y, 0f, 5f, true, false)
         circles.add(newCircle)
         task = scheduler.scheduleAtFixedRate({
-            newCircle.radius += 1
+            newCircle.radius += 0.5f
             view?.invalidate()
         }, 0, 1, TimeUnit.MILLISECONDS)
     }

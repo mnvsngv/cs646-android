@@ -3,7 +3,11 @@
     <string name="score">Score: </string>
     <string name="default_score">0</string>
     <string name="pause">Pause</string>
+    <string name="resume">Resume</string>
     <string name="new_game">New</string>
+    <string name="start_game">Start</string>
+    <string name="end_game">End</string>
     <string name="lives">Lives: </string>
-    <string name="default_lives">0</string>
+    <string name="default_lives">3</string>
+    <string name="obstacle_warning">You must have at least one obstacle!</string>
 </resources>

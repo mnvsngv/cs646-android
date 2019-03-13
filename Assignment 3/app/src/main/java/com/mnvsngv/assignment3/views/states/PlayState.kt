@@ -3,7 +3,6 @@ package com.mnvsngv.assignment3.views.states
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.Paint
-import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import com.mnvsngv.assignment3.MainActivity
@@ -11,6 +10,7 @@ import com.mnvsngv.assignment3.views.dataclasses.Obstacle
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
 import java.util.concurrent.TimeUnit
+import kotlin.math.pow
 
 class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
 
@@ -37,7 +37,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         this.height = height.toFloat()
         playerX = width / 2f
         playerY = height * 0.9f
-        obstaclePaint.color = Color.LTGRAY
+        obstaclePaint.color = Color.WHITE
+        playerPaint.color = Color.rgb(0, 153, 102)
 
         for (obstacle in obstacles) {
             if (obstacle.centreY > resetDistance) {
@@ -52,22 +53,28 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
 
         for (obstacle in obstacles) {
-            if (obstacle.visible) {
+            if (obstacle.visible && !obstacle.hasHitPlayer) {
                 canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
             }
             obstacle.centreY += obstacle.velocity
+
+            if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {
+                listener?.decreaseLife()
+                obstacle.hasHitPlayer = true
+            }
 
             if (obstacle.visible && (obstacle.centreY - obstacle.radius) > height) {
                 numInvisible++
                 obstacle.visible = false
                 listener?.increaseScore()
+                obstacle.hasHitPlayer = false
             }
         }
 
         if (numInvisible == obstacles.size) {
             for (obstacle in obstacles) {
                 obstacle.visible = true
-                obstacle.centreY -= (height + resetDistance + obstacle.radius)
+                obstacle.centreY -= (height + resetDistance)
                 obstacle.velocity *= 1.25f
             }
             numInvisible = 0
@@ -96,8 +103,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         return false
     }
 
-    override fun state(): GameState.StateConstants {
-        return GameState.StateConstants.PLAY
+    override fun state(): GameState.Constants {
+        return GameState.Constants.PLAY
     }
 
     private fun startMoving(directionToMove: Direction?) {
@@ -129,7 +136,6 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 playerX -= 0.1f
             }
         }
-//        view.invalidate()
     }
 
     private fun getDirection(event: MotionEvent): Direction? {
@@ -140,6 +146,12 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         } else {
             Direction.LEFT
         }
+    }
+
+    private fun isPlayerHit(obstacle: Obstacle): Boolean {
+        val centreDistance = (playerX - obstacle.centreX).pow(2) + (playerY - obstacle.centreY).pow(2)
+        val minimumDistance = (playerRadius + obstacle.radius).pow(2)
+        return centreDistance < minimumDistance
     }
 
 }
