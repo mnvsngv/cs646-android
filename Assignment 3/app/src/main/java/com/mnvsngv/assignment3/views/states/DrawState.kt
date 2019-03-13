@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
+import com.mnvsngv.assignment3.MainActivity
 import com.mnvsngv.assignment3.views.dataclasses.Obstacle
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -18,7 +19,7 @@ class DrawState: GameState {
     val circles = ArrayList<Obstacle>()
     private val paint = Paint()
 
-    override fun init(view: View, width: Int, height: Int) {
+    override fun init(view: View, width: Int, height: Int, listener: MainActivity.GameBarListener?) {
         this.view = view
         paint.color = Color.LTGRAY
     }

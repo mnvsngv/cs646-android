@@ -11,10 +11,33 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
+    private var score = 0
+    private var lives = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+//        score = 0
+//        lives = 0
+
         mainButton.setOnClickListener { gameView.onMainButtonPressed() }
+        gameView.setListener(object: GameBarListener {
+            override fun increaseScore() {
+                score++
+                scoreView.text = score.toString()
+            }
+
+            override fun decreaseLife() {
+                lives--
+                livesView.text = lives.toString()
+            }
+        })
+    }
+
+    interface GameBarListener {
+        fun increaseScore()
+        fun decreaseLife()
     }
 
 }

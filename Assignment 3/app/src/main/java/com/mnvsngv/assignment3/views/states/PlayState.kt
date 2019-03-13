@@ -6,6 +6,7 @@ import android.graphics.Paint
 import android.util.Log
 import android.view.MotionEvent
 import android.view.View
+import com.mnvsngv.assignment3.MainActivity
 import com.mnvsngv.assignment3.views.dataclasses.Obstacle
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -28,8 +29,9 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private var motionDirection: Direction? = null
     private var resetDistance = 0f
     private var numInvisible = 0
+    private var listener: MainActivity.GameBarListener? = null
 
-    override fun init(view: View, width: Int, height: Int) {
+    override fun init(view: View, width: Int, height: Int, listener: MainActivity.GameBarListener?) {
         this.view = view
         this.width = width.toFloat()
         this.height = height.toFloat()
@@ -42,7 +44,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 resetDistance = obstacle.centreY
             }
         }
-        Log.i("m", "Reset distance: $resetDistance")
+
+        this.listener =  listener
     }
 
     override fun drawOn(canvas: Canvas?) {
@@ -57,9 +60,9 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
             if (obstacle.visible && (obstacle.centreY - obstacle.radius) > height) {
                 numInvisible++
                 obstacle.visible = false
+                listener?.increaseScore()
             }
         }
-
 
         if (numInvisible == obstacles.size) {
             for (obstacle in obstacles) {
