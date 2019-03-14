@@ -5,6 +5,7 @@ import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
 import com.mnvsngv.assignment3.MainActivity
+import com.mnvsngv.assignment3.R
 import com.mnvsngv.assignment3.views.dataclasses.Obstacle
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledFuture
@@ -30,6 +31,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private var numInvisible = 0
     private var listener: MainActivity.GameBarListener? = null
     var isPaused = false
+    var hasGameEnded = false
 
     override fun init(view: View, width: Int, height: Int, listener: MainActivity.GameBarListener?) {
         this.view = view
@@ -49,6 +51,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         this.listener =  listener
     }
 
+
     override fun drawOn(canvas: Canvas?) {
         canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
 
@@ -57,9 +60,6 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
             }
             if (!isPaused) {
-
-                obstacle.centreY += obstacle.velocity
-
                 if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {
                     listener?.decreaseLife()
                     obstacle.hasHitPlayer = true
@@ -74,6 +74,14 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                     obstacle.hasHitPlayer = false
                 }
 
+                obstacle.centreY += obstacle.velocity
+            } else {
+                val textPaint = Paint()
+                textPaint.textSize = 50f
+                textPaint.textAlign = Paint.Align.CENTER
+                if (view != null && !hasGameEnded) {
+                    canvas?.drawText((view as View).context.getString(R.string.paused), width/2, height/2, textPaint)
+                }
             }
         }
         if (numInvisible == obstacles.size) {
@@ -157,8 +165,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private fun isPlayerHit(obstacle: Obstacle): Boolean {
         val centreDistance = (playerX - obstacle.centreX).pow(2) + (playerY - obstacle.centreY).pow(2)
         val minimumDistance = (playerRadius + obstacle.radius).pow(2)
-        // W'll add a small buffer in the player's favour to compensate for calculation inaccuracies
-        return centreDistance < minimumDistance + 3f
+        return centreDistance < minimumDistance
     }
 
 }

@@ -2,7 +2,6 @@ package com.mnvsngv.assignment3
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -13,7 +12,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val context = this
 
         mainButton.setOnClickListener { gameView.onMainButtonPressed() }
         pauseButton.setOnClickListener { gameView.onPauseButtonPressed() }
@@ -28,9 +26,8 @@ class MainActivity : AppCompatActivity() {
                 lives--
                 livesView.text = lives.toString()
                 if (lives == 0) {
-                    gameView.onPauseButtonPressed()
                     gameView.endGame()
-                    Toast.makeText(context, getString(R.string.game_over), Toast.LENGTH_SHORT).show()
+                    GameOverDialog().show(supportFragmentManager, "game_over")
                 }
             }
 

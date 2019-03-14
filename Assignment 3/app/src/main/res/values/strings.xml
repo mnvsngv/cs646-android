@@ -11,4 +11,6 @@
     <string name="default_lives">3</string>
     <string name="obstacle_warning">You must have at least one obstacle!</string>
     <string name="game_over">Game Over!</string>
+    <string name="ok">OK</string>
+    <string name="paused">Paused</string>
 </resources>

@@ -75,8 +75,13 @@ class GameView : View, View.OnTouchListener {
     }
 
     fun endGame() {
-        currentState = NewGameState()
-        listener?.setMainButtonText(context.getString(R.string.new_game))
+        if (currentState is PlayState) {
+            val playState: PlayState = currentState as PlayState
+            playState.isPaused = true
+            playState.hasGameEnded = true
+            currentState = NewGameState()
+            listener?.setMainButtonText(context.getString(R.string.new_game))
+        }
     }
 
     fun onPauseButtonPressed() {
