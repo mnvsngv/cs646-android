@@ -1,7 +1,6 @@
 package com.mnvsngv.assignment3.views.states
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
@@ -38,8 +37,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         this.height = height.toFloat()
         playerX = width / 2f
         playerY = height * 0.9f
-        obstaclePaint.color = Color.WHITE
-        playerPaint.color = Color.rgb(0, 153, 102)
+        obstaclePaint.style = Paint.Style.STROKE
+        obstaclePaint.strokeWidth = 3f
 
         for (obstacle in obstacles) {
             if (obstacle.centreY > resetDistance) {
@@ -158,7 +157,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private fun isPlayerHit(obstacle: Obstacle): Boolean {
         val centreDistance = (playerX - obstacle.centreX).pow(2) + (playerY - obstacle.centreY).pow(2)
         val minimumDistance = (playerRadius + obstacle.radius).pow(2)
-        return centreDistance < minimumDistance
+        // W'll add a small buffer in the player's favour to compensate for calculation inaccuracies
+        return centreDistance < minimumDistance + 3f
     }
 
 }

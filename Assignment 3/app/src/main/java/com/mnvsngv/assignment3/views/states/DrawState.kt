@@ -1,7 +1,6 @@
 package com.mnvsngv.assignment3.views.states
 
 import android.graphics.Canvas
-import android.graphics.Color
 import android.graphics.Paint
 import android.view.MotionEvent
 import android.view.View
@@ -21,7 +20,8 @@ class DrawState : GameState {
 
     override fun init(view: View, width: Int, height: Int, listener: MainActivity.GameBarListener?) {
         this.view = view
-        paint.color = Color.LTGRAY
+        paint.style = Paint.Style.STROKE
+        paint.strokeWidth = 3f
     }
 
     override fun drawOn(canvas: Canvas?) {

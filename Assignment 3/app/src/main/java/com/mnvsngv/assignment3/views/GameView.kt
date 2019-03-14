@@ -60,7 +60,6 @@ class GameView : View, View.OnTouchListener {
 
             GameState.Constants.PLAY -> {
                 currentState = NewGameState()
-                listener?.reset()
                 listener?.setMainButtonText(context.getString(R.string.new_game))
                 invalidate()
             }
