@@ -51,13 +51,14 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     }
 
     override fun drawOn(canvas: Canvas?) {
-        if (!isPaused) {
-            canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
+        canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
 
-            for (obstacle in obstacles) {
-                if (obstacle.visible && !obstacle.hasHitPlayer) {
-                    canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
-                }
+        for (obstacle in obstacles) {
+            if (obstacle.visible && !obstacle.hasHitPlayer) {
+                canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
+            }
+            if (!isPaused) {
+
                 obstacle.centreY += obstacle.velocity
 
                 if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {
@@ -68,20 +69,23 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 if (obstacle.visible && (obstacle.centreY - obstacle.radius) > height) {
                     numInvisible++
                     obstacle.visible = false
-                    listener?.increaseScore()
+                    if (!obstacle.hasHitPlayer) {
+                        listener?.increaseScore()
+                    }
                     obstacle.hasHitPlayer = false
                 }
-            }
 
-            if (numInvisible == obstacles.size) {
-                for (obstacle in obstacles) {
-                    obstacle.visible = true
-                    obstacle.centreY -= (height + resetDistance)
-                    obstacle.velocity *= 1.25f
-                }
-                numInvisible = 0
             }
-
+        }
+        if (numInvisible == obstacles.size) {
+            for (obstacle in obstacles) {
+                obstacle.visible = true
+                obstacle.centreY -= (height + resetDistance)
+                obstacle.velocity *= 1.25f
+            }
+            numInvisible = 0
+        }
+        if (!isPaused) {
             view?.invalidate()
         }
     }

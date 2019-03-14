@@ -3,8 +3,8 @@ package com.mnvsngv.assignment3.views
 import android.content.Context
 import android.graphics.Canvas
 import android.util.AttributeSet
-import android.view.View
 import android.view.MotionEvent
+import android.view.View
 import android.widget.Toast
 import com.mnvsngv.assignment3.MainActivity
 import com.mnvsngv.assignment3.R
@@ -55,21 +55,29 @@ class GameView : View, View.OnTouchListener {
                     currentState = PlayState(circles)
                     listener?.setMainButtonText(context.getString(R.string.end_game))
                 }
+                invalidate()
             }
 
             GameState.Constants.PLAY -> {
                 currentState = NewGameState()
                 listener?.reset()
                 listener?.setMainButtonText(context.getString(R.string.new_game))
+                invalidate()
             }
 
             GameState.Constants.NEW -> {
                 currentState = DrawState()
                 listener?.setMainButtonText(context.getString(R.string.start_game))
+                listener?.reset()
+                invalidate()
             }
         }
         currentState?.init(this, width, height, listener)
-        invalidate()
+    }
+
+    fun endGame() {
+        currentState = NewGameState()
+        listener?.setMainButtonText(context.getString(R.string.new_game))
     }
 
     fun onPauseButtonPressed() {

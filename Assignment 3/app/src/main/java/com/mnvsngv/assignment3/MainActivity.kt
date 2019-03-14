@@ -1,12 +1,8 @@
 package com.mnvsngv.assignment3
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
-import android.view.MotionEvent
-import android.view.MotionEvent.ACTION_DOWN
-import android.view.MotionEvent.ACTION_UP
-import android.view.View
+import android.support.v7.app.AppCompatActivity
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -17,6 +13,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        val context = this
 
         mainButton.setOnClickListener { gameView.onMainButtonPressed() }
         pauseButton.setOnClickListener { gameView.onPauseButtonPressed() }
@@ -30,6 +27,11 @@ class MainActivity : AppCompatActivity() {
             override fun decreaseLife() {
                 lives--
                 livesView.text = lives.toString()
+                if (lives == 0) {
+                    gameView.onPauseButtonPressed()
+                    gameView.endGame()
+                    Toast.makeText(context, getString(R.string.game_over), Toast.LENGTH_SHORT).show()
+                }
             }
 
             override fun setMainButtonText(text: String) {

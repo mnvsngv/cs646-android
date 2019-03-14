@@ -10,4 +10,5 @@
     <string name="lives">Lives: </string>
     <string name="default_lives">3</string>
     <string name="obstacle_warning">You must have at least one obstacle!</string>
+    <string name="game_over">Game Over!</string>
 </resources>
