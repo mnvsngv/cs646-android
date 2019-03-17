@@ -121,13 +121,6 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 stopMotion()
                 return true
             }
-
-            MotionEvent.ACTION_POINTER_UP -> {  // TODO remove this and test
-                if (event.pointerCount == 1) {
-                    startMoving(getDirection(event))
-                }
-                return true
-            }
         }
         return false
     }
