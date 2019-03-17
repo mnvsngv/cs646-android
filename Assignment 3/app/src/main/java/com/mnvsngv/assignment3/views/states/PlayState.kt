@@ -29,6 +29,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private lateinit var motionDirection: Direction
     private var resetDistance = 0f
     private var numInvisible = 0
+    private val maxVelocity = 35f
     private lateinit var listener: GameBarListener
     var isPaused = false
     var hasGameEnded = false
@@ -98,7 +99,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
             for (obstacle in obstacles) {
                 obstacle.visible = true
                 obstacle.centreY -= (height + resetDistance)
-                obstacle.velocity *= 1.25f
+                if (obstacle.velocity <= maxVelocity)  // Don't let the obstacles fall too fast!
+                    obstacle.velocity *= 1.25f
             }
             numInvisible = 0
         }
