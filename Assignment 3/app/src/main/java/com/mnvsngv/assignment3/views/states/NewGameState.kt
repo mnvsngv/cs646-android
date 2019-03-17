@@ -6,11 +6,11 @@ import android.view.View
 import com.mnvsngv.assignment3.GameBarListener
 
 class NewGameState : GameState {
-    override fun init(view: View, width: Int, height: Int, listener: GameBarListener?) {
+    override fun init(view: View, width: Int, height: Int, listener: GameBarListener) {
 
     }
 
-    override fun drawOn(canvas: Canvas?) {
+    override fun drawOn(canvas: Canvas) {
 
     }
 

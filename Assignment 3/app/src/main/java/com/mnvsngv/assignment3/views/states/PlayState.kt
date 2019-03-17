@@ -14,7 +14,7 @@ import kotlin.math.pow
 
 class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
 
-    private var view: View? = null
+    private lateinit var view: View
     private var playerX = 0f
     private var playerY = 0f
     private val playerRadius = 25f
@@ -26,14 +26,14 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     private var task: ScheduledFuture<*>? = null
     private var isInMotion = false
     private enum class Direction { LEFT, RIGHT }
-    private var motionDirection: Direction? = null
+    private lateinit var motionDirection: Direction
     private var resetDistance = 0f
     private var numInvisible = 0
-    private var listener: GameBarListener? = null
+    private lateinit var listener: GameBarListener
     var isPaused = false
     var hasGameEnded = false
 
-    override fun init(view: View, width: Int, height: Int, listener: GameBarListener?) {
+    override fun init(view: View, width: Int, height: Int, listener: GameBarListener) {
         this.view = view
         this.width = width.toFloat()
         this.height = height.toFloat()
@@ -54,19 +54,19 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
     }
 
 
-    override fun drawOn(canvas: Canvas?) {
+    override fun drawOn(canvas: Canvas) {
 
         // Draw the player circle
-        canvas?.drawCircle(playerX, playerY, playerRadius, playerPaint)
+        canvas.drawCircle(playerX, playerY, playerRadius, playerPaint)
 
         for (obstacle in obstacles) {
             if (obstacle.visible && !obstacle.hasHitPlayer) {
-                canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
+                canvas.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, obstaclePaint)
             }
 
             if (!isPaused) {  // If we're not paused then move the obstacle & perform collision detection
                 if (!obstacle.hasHitPlayer && isPlayerHit(obstacle)) {  // Collision detection
-                    listener?.decreaseLife()
+                    listener.decreaseLife()
                     obstacle.hasHitPlayer = true
                 }
 
@@ -74,7 +74,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                     numInvisible++
                     obstacle.visible = false
                     if (!obstacle.hasHitPlayer) {
-                        listener?.increaseScore()
+                        listener.increaseScore()
                     }
                     obstacle.hasHitPlayer = false
                 }
@@ -87,8 +87,8 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 val textPaint = Paint()
                 textPaint.textSize = 50f
                 textPaint.textAlign = Paint.Align.CENTER
-                if (view != null && !hasGameEnded) {  // Only show the text if we haven't finished the game
-                    canvas?.drawText((view as View).context.getString(R.string.paused), width/2, height/2, textPaint)
+                if (!hasGameEnded) {  // Only show the text if we haven't finished the game
+                    canvas.drawText(view.context.getString(R.string.paused), width/2, height/2, textPaint)
                 }
             }
         }
@@ -106,7 +106,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         // Only invalidate & redraw if we're not paused.
         // Otherwise the user will not be able to see the circles on the screen while paused.
         if (!isPaused) {
-            view?.invalidate()
+            view.invalidate()
         }
     }
 
@@ -129,12 +129,12 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         return GameState.Constants.PLAY
     }
 
-    private fun startMoving(directionToMove: Direction?) {
+    private fun startMoving(directionToMove: Direction) {
         if (isInMotion && directionToMove != motionDirection) {
             // If user tries to move in the opposite direction of current motion, stop the motion.
             task?.cancel(true)
             isInMotion = false
-        } else if(!isInMotion) {
+        } else if(!isInMotion && !isPaused) {
             // If the circle isn't moving right now then start moving it
             task = scheduler.scheduleAtFixedRate({ move(directionToMove) },
                 0, 100, TimeUnit.MICROSECONDS
@@ -148,7 +148,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         task?.cancel(true)
     }
 
-    private fun move(directionToMove: Direction?) {
+    private fun move(directionToMove: Direction) {
         motionDirection = directionToMove
         if (motionDirection == Direction.RIGHT) {
             if (playerX + playerRadius < width) {  // Bounds check
@@ -162,7 +162,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
         }
     }
 
-    private fun getDirection(event: MotionEvent): Direction? {
+    private fun getDirection(event: MotionEvent): Direction {
         // event.x returns the first finger's x co-ordinate
         // but we need the newest finger's x co-ordinate, so the following code.
         return if (event.getX(event.pointerCount - 1) > width / 2) {

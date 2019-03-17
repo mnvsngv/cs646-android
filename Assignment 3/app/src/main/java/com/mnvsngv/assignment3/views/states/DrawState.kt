@@ -12,22 +12,22 @@ import java.util.concurrent.TimeUnit
 
 class DrawState : GameState {
 
-    private var view: View? = null
+    private lateinit var view: View
     private val scheduler = Executors.newScheduledThreadPool(1)
     private var task: ScheduledFuture<*>? = null
     val obstacles = ArrayList<Obstacle>()
     private val paint = Paint()
 
-    override fun init(view: View, width: Int, height: Int, listener: GameBarListener?) {
+    override fun init(view: View, width: Int, height: Int, listener: GameBarListener) {
         this.view = view
         paint.style = Paint.Style.STROKE
         paint.strokeWidth = 3f
     }
 
     // Draw all the obstacles.
-    override fun drawOn(canvas: Canvas?) {
+    override fun drawOn(canvas: Canvas) {
         for (obstacle in obstacles) {
-            canvas?.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, paint)
+            canvas.drawCircle(obstacle.centreX, obstacle.centreY, obstacle.radius, paint)
         }
     }
 
@@ -56,7 +56,7 @@ class DrawState : GameState {
         // Keep expanding the circle till we want to stop
         task = scheduler.scheduleAtFixedRate({
             circle.radius += 0.5f
-            view?.invalidate()
+            view.invalidate()
         }, 0, 1, TimeUnit.MILLISECONDS)
     }
 
