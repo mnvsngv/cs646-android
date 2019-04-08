@@ -162,6 +162,7 @@ class PlayState(private val obstacles: ArrayList<Obstacle>) : GameState {
                 playerX -= 0.1f
             }
         }
+        view.invalidate()
     }
 
     private fun getDirection(event: MotionEvent): Direction {

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        tools:context=".LoginActivity">
+    <TextView
+            android:text="@string/welcome_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/welcomeText"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/emailInput" app:layout_constraintVertical_chainStyle="packed"
+            android:textColor="#000" android:textStyle="bold" android:textSize="36sp"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="textEmailAddress"
+            android:ems="10"
+            android:id="@+id/emailInput" app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/passwordInput" android:hint="@string/email_hint"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toBottomOf="@+id/welcomeText"
+            android:layout_margin="@dimen/form_padding" app:layout_constraintVertical_chainStyle="packed"/>
+    <EditText
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:inputType="textPassword"
+            android:ems="10"
+            android:id="@+id/passwordInput" app:layout_constraintRight_toRightOf="parent"
+            android:hint="@string/password_hint"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toBottomOf="@+id/emailInput"
+            android:layout_margin="@dimen/form_padding" app:layout_constraintVertical_chainStyle="packed"
+            app:layout_constraintBottom_toTopOf="@+id/buttonBar"/>
+    <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:id="@+id/buttonBar"
+            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@+id/passwordInput"
+            app:layout_constraintHorizontal_weight="1">
+        <Button
+                android:text="@string/login_button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/loginButton"
+                app:layout_constraintBaseline_toBaselineOf="@+id/registerButton"
+                app:layout_constraintRight_toLeftOf="@+id/registerButton" app:layout_constraintLeft_toLeftOf="parent"/>
+        <Button
+                android:text="@string/register_button_text"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/registerButton"
+                app:layout_constraintBottom_toBottomOf="parent"
+                android:layout_marginBottom="1dp" app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintLeft_toRightOf="@+id/loginButton"/>
+    </android.support.constraint.ConstraintLayout>
+</android.support.constraint.ConstraintLayout>

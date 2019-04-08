@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Assignment 4</string>
+    <string name="welcome_text">Log in to InstaPost</string>
+    <string name="email_input">Email ID:</string>
+    <string name="password_input">Password:</string>
+    <string name="email_hint">Email ID...</string>
+    <string name="password_hint">Password...</string>
+    <string name="login_button_text">Login</string>
+    <string name="register_button_text">Create Account</string>
+</resources>
