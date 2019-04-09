@@ -3,8 +3,7 @@
     <string name="welcome_text">Log in to</string>
     <string name="email_input">Email ID:</string>
     <string name="password_input">Password:</string>
-    <string name="email_hint">Email ID...</string>
-    <string name="password_hint">Password...</string>
+    <string name="email_hint">Email ID…</string>
     <string name="login_button_text">Login</string>
     <string name="register_button_text">Create Account</string>
     <string name="instapost_text">InstaPost</string>
@@ -13,4 +12,9 @@
     <string name="invalid_credentials">Invalid password.</string>
     <string name="weak_password">Password must contain at least 6 characters!</string>
     <string name="invalid_user">Invalid user ID! Create a new account!</string>
+    <string name="register_text">Create a new account for</string>
+    <string name="user_id_hint">User ID…</string>
+    <string name="name_hint">Name…</string>
+    <string name="password_hint">Password…</string>
+    <string name="confirm_password_hint">Confirm Password…</string>
 </resources>
