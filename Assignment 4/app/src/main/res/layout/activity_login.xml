@@ -6,14 +6,28 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".LoginActivity">
+    <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:indeterminate="true" android:indeterminateOnly="true" android:visibility="invisible"/>
     <TextView
             android:text="@string/welcome_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" android:id="@+id/welcomeText"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintBottom_toTopOf="@+id/emailInput" app:layout_constraintVertical_chainStyle="packed"
-            android:textColor="#000" android:textStyle="bold" android:textSize="36sp"/>
+            app:layout_constraintBottom_toTopOf="@+id/logoText" app:layout_constraintVertical_chainStyle="packed"
+            android:textColor="#000" android:textStyle="bold" android:textSize="24sp"/>
+    <TextView
+            android:text="@string/instapost_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/logoText" android:fontFamily="cursive"
+            app:layout_constraintBottom_toTopOf="@+id/emailInput" app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toBottomOf="@+id/welcomeText"
+            android:textStyle="bold" android:textSize="42sp" android:textColor="@color/colorPrimary"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -21,7 +35,7 @@
             android:ems="10"
             android:id="@+id/emailInput" app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintBottom_toTopOf="@+id/passwordInput" android:hint="@string/email_hint"
-            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toBottomOf="@+id/welcomeText"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toBottomOf="@+id/logoText"
             android:layout_margin="@dimen/form_padding" app:layout_constraintVertical_chainStyle="packed"/>
     <EditText
             android:layout_width="0dp"
@@ -32,24 +46,21 @@
             android:hint="@string/password_hint"
             app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintTop_toBottomOf="@+id/emailInput"
             android:layout_margin="@dimen/form_padding" app:layout_constraintVertical_chainStyle="packed"
-            app:layout_constraintBottom_toTopOf="@+id/buttonBar"/>
-    <android.support.constraint.ConstraintLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" android:id="@+id/buttonBar"
-            app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@+id/passwordInput"
-            app:layout_constraintHorizontal_weight="1">
-        <Button
-                android:text="@string/login_button_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/loginButton"
-                app:layout_constraintBaseline_toBaselineOf="@+id/registerButton"
-                app:layout_constraintRight_toLeftOf="@+id/registerButton" app:layout_constraintLeft_toLeftOf="parent"/>
-        <Button
-                android:text="@string/register_button_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content" android:id="@+id/registerButton"
-                app:layout_constraintBottom_toBottomOf="parent"
-                android:layout_marginBottom="1dp" app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintLeft_toRightOf="@+id/loginButton"/>
-    </android.support.constraint.ConstraintLayout>
+            app:layout_constraintBottom_toTopOf="@+id/loginButton" android:imeOptions="actionGo"/>
+    <Button
+            android:text="@string/login_button_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" android:id="@+id/loginButton"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/passwordInput"
+            app:layout_constraintBottom_toTopOf="@+id/registerInfoText" app:layout_constraintRight_toRightOf="parent"/>
+    <TextView
+            android:text="@string/register_info"
+            android:layout_width="wrap_content"
+            android:id="@+id/registerInfoText"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
+            android:layout_height="wrap_content"
+            android:paddingLeft="@dimen/dialog_padding" android:paddingRight="@dimen/dialog_padding"
+            android:paddingTop="@dimen/form_padding" app:layout_constraintTop_toBottomOf="@+id/loginButton"/>
 </android.support.constraint.ConstraintLayout>
