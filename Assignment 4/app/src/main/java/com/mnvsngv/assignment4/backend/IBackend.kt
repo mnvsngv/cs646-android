@@ -1,6 +1,7 @@
 package com.mnvsngv.assignment4.backend
 
 interface IBackend {
-    fun loginOrRegister(id: String, password: String)
+    fun login(email: String, password: String)
+    fun register(email: String, userID: String, name: String, password: String)
     fun isUserLoggedIn(): Boolean
 }

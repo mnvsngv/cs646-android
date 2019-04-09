@@ -1,11 +1,9 @@
 package com.mnvsngv.assignment4.backend
 
 import android.app.Activity
-import android.util.Log
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.mnvsngv.assignment4.R
-import java.lang.Exception
 
 
 private const val TAG = "FirebaseBackend"
@@ -14,8 +12,12 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    override fun loginOrRegister(id: String, password: String) {
-        checkInUser(id, password, auth::signInWithEmailAndPassword)
+    override fun login(email: String, password: String) {
+        checkInUser(email, password, auth::signInWithEmailAndPassword)
+    }
+
+    override fun register(email: String, userID: String, name: String, password: String) {
+        checkInUser(email, password, auth::createUserWithEmailAndPassword)
     }
 
     override fun isUserLoggedIn(): Boolean {
@@ -28,16 +30,16 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
                 if (it.isSuccessful) {
                     listener.onLoginSuccess()
                 } else {
-                    handleFirebaseException(id, password, it.exception)
+                    handleFirebaseException(it.exception)
                 }
             }
     }
 
-    private fun handleFirebaseException(id: String, password: String, exception: Exception?) {
+    private fun handleFirebaseException(exception: Exception?) {
         when (exception) {
             is FirebaseAuthInvalidUserException -> {
                 if (exception.errorCode == "ERROR_USER_NOT_FOUND") {
-                    checkInUser(id, password, auth::createUserWithEmailAndPassword)
+                    listener.onLoginFailure(baseActivity.getString(R.string.invalid_user))
                 }
             }
 

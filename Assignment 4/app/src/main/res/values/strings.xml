@@ -8,11 +8,9 @@
     <string name="login_button_text">Login</string>
     <string name="register_button_text">Create Account</string>
     <string name="instapost_text">InstaPost</string>
-    <string name="register_info">Need to create an account? A new one will be automatically created for you when you log
-        in with a new email ID.
-    </string>
     <string name="login_failure">Unable to log in! Please try again?</string>
     <string name="login_success">Welcome back!</string>
     <string name="invalid_credentials">Invalid password.</string>
     <string name="weak_password">Password must contain at least 6 characters!</string>
+    <string name="invalid_user">Invalid user ID! Create a new account!</string>
 </resources>
