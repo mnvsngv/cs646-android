@@ -26,7 +26,7 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
-        if (backend.isUserLoggedIn()) onLoginSuccess()
+//        if (backend.isUserLoggedIn()) onLoginSuccess()
 
         loginButton.setOnClickListener {
             if (areInputsValid()) {

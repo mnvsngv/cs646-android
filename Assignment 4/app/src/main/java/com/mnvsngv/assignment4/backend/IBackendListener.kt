@@ -5,4 +5,5 @@ interface IBackendListener {
     fun onLoginFailure(messageID: Int) {}
     fun onRegisterSuccess() {}
     fun onRegisterFailure(messageID: Int) {}
+    fun onLogout() {}
 }

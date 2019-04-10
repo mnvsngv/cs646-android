@@ -43,6 +43,11 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         return auth.currentUser == null
     }
 
+    override fun logout() {
+        auth.signOut()
+        listener.onLogout()
+    }
+
     private fun registerAndCreateUser(email: String, userID: String, name: String) {
         // Create a new user with a first and last name
         val user = HashMap<String, Any>()
