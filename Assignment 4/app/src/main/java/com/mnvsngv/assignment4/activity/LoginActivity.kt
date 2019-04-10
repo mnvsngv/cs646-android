@@ -13,6 +13,9 @@ import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
 import kotlinx.android.synthetic.main.activity_login.*
+import org.jetbrains.anko.clearTop
+import org.jetbrains.anko.intentFor
+import org.jetbrains.anko.newTask
 import org.jetbrains.anko.startActivity
 
 
@@ -74,7 +77,8 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
     override fun onLoginSuccess() {
         progressBar.visibility = View.INVISIBLE
 //        Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
-        startActivity<InstaPostActivity>()
+        startActivity(intentFor<InstaPostActivity>().newTask().clearTop())
+        finish()
     }
 
     override fun onLoginFailure(messageID: Int) {
