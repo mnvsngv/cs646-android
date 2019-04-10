@@ -2,6 +2,8 @@ package com.mnvsngv.assignment4.activity
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.text.TextUtils
+import android.util.Patterns
 import android.view.KeyEvent
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -24,8 +26,10 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         if (backend.isUserLoggedIn()) onLoginSuccess()
 
         loginButton.setOnClickListener {
-            progressBar.visibility = View.VISIBLE
-            backend.login(emailInput.text.toString(), passwordInput.text.toString())
+            if (areInputsValid()) {
+                progressBar.visibility = View.VISIBLE
+                backend.login(emailInput.text.toString(), passwordInput.text.toString())
+            }
         }
 
         registerButton.setOnClickListener {
@@ -33,6 +37,24 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         }
 
         passwordInput.setOnEditorActionListener(this)
+    }
+
+    private fun areInputsValid(): Boolean {
+        var isValid = true
+
+        val emailText = emailInput.text.toString().trim()
+        if (TextUtils.isEmpty(emailText) || !Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
+            emailInput.error = getString(R.string.invalid_email)
+            isValid = false
+        }
+
+        val passwordText = passwordInput.text.toString().trim()
+        if (TextUtils.isEmpty(passwordText)) {
+            passwordInput.error = getString(R.string.invalid_password)
+            isValid = false
+        }
+
+        return isValid
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {

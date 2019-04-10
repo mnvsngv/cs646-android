@@ -17,4 +17,6 @@
     <string name="name_hint">Name…</string>
     <string name="password_hint">Password…</string>
     <string name="confirm_password_hint">Confirm Password…</string>
+    <string name="invalid_email">Please enter a valid email!</string>
+    <string name="invalid_password">Please enter your password!</string>
 </resources>
