@@ -1,10 +1,13 @@
 package com.mnvsngv.assignment4.activity
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.TextUtils
 import android.util.Patterns
+import android.view.KeyEvent
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 import android.widget.Toast
 import com.mnvsngv.assignment4.R
@@ -12,7 +15,7 @@ import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
 import kotlinx.android.synthetic.main.activity_register.*
 
-class RegisterActivity : AppCompatActivity(), IBackendListener {
+class RegisterActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
     private val backend = FirebaseBackend(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,6 +31,9 @@ class RegisterActivity : AppCompatActivity(), IBackendListener {
                 )
             }
         }
+
+        confirmPasswordInput.setOnEditorActionListener(this)
+        actionBar?.setDisplayHomeAsUpEnabled(true)
     }
 
     private fun areInputsValid(): Boolean {
@@ -59,6 +65,27 @@ class RegisterActivity : AppCompatActivity(), IBackendListener {
         }
 
         return true
+    }
+
+    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+        if (areInputsValid()) {
+            // Hide the keyboard
+            val currentView = this.currentFocus
+            currentView?.let { view ->
+                val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                imm?.hideSoftInputFromWindow(view.windowToken, 0)
+            }
+
+            // Register the user
+            progressBar.visibility = View.VISIBLE
+            backend.register(
+                emailInput.text.toString(), userIDInput.text.toString(),
+                nameInput.text.toString(), passwordInput.text.toString()
+            )
+            return true  // Event handled!
+        }
+
+        return false  // Event not handled!
     }
 
     override fun onRegisterSuccess() {

@@ -67,6 +67,7 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_GO) {
+            progressBar.visibility = View.VISIBLE
             backend.login(emailInput.text.toString(), passwordInput.text.toString())
             return true  // Event handled!
         }

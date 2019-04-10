@@ -15,7 +15,12 @@
         </activity>
         <activity
                 android:name=".activity.RegisterActivity"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize"
+                android:parentActivityName="com.mnvsngv.assignment4.activity.LoginActivity" >
+            <!-- Parent activity meta-data to support 4.0 and lower -->
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value="com.mnvsngv.assignment4.activity.LoginActivity" />
         </activity>
         <activity
                 android:name=".activity.LoginActivity"
