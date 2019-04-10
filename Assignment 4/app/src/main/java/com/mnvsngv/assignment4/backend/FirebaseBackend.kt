@@ -13,22 +13,24 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
     private val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
     override fun login(email: String, password: String) {
-        checkInUser(email, password, auth::signInWithEmailAndPassword)
+        checkInUser(email, password, auth::signInWithEmailAndPassword, listener::onLoginSuccess)
     }
 
     override fun register(email: String, userID: String, name: String, password: String) {
-        checkInUser(email, password, auth::createUserWithEmailAndPassword)
+        checkInUser(email, password, auth::createUserWithEmailAndPassword, listener::onRegisterSuccess)
     }
 
     override fun isUserLoggedIn(): Boolean {
         return auth.currentUser == null
     }
 
-    private fun checkInUser(id: String, password: String, firebaseFunction: (String, String) -> Task<AuthResult>) {
+    private fun checkInUser(id: String, password: String,
+                            firebaseFunction: (String, String) -> Task<AuthResult>,
+                            listenerSuccessFunction: () -> Unit) {
         firebaseFunction(id, password)
             .addOnCompleteListener(baseActivity) {
                 if (it.isSuccessful) {
-                    listener.onLoginSuccess()
+                    listenerSuccessFunction()
                 } else {
                     handleFirebaseException(it.exception)
                 }
