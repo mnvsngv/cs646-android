@@ -2,10 +2,7 @@ package com.mnvsngv.assignment4.backend
 
 import android.app.Activity
 import android.util.Log
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
-import com.google.firebase.auth.FirebaseAuthInvalidUserException
-import com.google.firebase.auth.FirebaseAuthWeakPasswordException
+import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.mnvsngv.assignment4.R
 
@@ -36,6 +33,7 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
                     registerAndCreateUser(email, userID, name)
                     listener.onRegisterSuccess()
                 } else {
+                    Log.w(TAG, it.exception)
                     handleRegisterException(it.exception)
                 }
             }
@@ -70,17 +68,17 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
             // User doesn't exist
             is FirebaseAuthInvalidUserException -> {
                 if (exception.errorCode == "ERROR_USER_NOT_FOUND") {
-                    listener.onLoginFailure(baseActivity.getString(R.string.invalid_user))
+                    listener.onLoginFailure(R.string.invalid_user)
                 }
             }
 
             // Incorrect password
             is FirebaseAuthInvalidCredentialsException -> {
-                listener.onLoginFailure(baseActivity.getString(R.string.invalid_credentials))
+                listener.onLoginFailure(R.string.invalid_credentials)
             }
 
             // Some other issue?
-            else -> listener.onLoginFailure(baseActivity.getString(R.string.login_failure))
+            else -> listener.onLoginFailure(R.string.login_failure)
         }
     }
 
@@ -88,7 +86,12 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         when (exception) {
             // Password too weak
             is FirebaseAuthWeakPasswordException -> {
-                listener.onLoginFailure(baseActivity.getString(R.string.weak_password))
+                listener.onRegisterFailure(R.string.weak_password)
+            }
+
+            // User already exists
+            is FirebaseAuthUserCollisionException -> {
+                listener.onRegisterFailure(R.string.user_already_exists)
             }
         }
     }

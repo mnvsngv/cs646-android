@@ -6,6 +6,13 @@
         android:layout_height="match_parent"
         tools:context=".activity.RegisterActivity">
 
+    <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/progressBar" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:indeterminate="true" android:indeterminateOnly="true" android:visibility="invisible"/>
     <TextView
             android:text="@string/register_text"
             android:layout_width="wrap_content"

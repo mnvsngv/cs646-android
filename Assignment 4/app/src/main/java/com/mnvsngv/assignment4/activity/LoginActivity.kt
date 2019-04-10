@@ -40,21 +40,26 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
     }
 
     private fun areInputsValid(): Boolean {
-        var isValid = true
 
-        val emailText = emailInput.text.toString().trim()
-        if (TextUtils.isEmpty(emailText) || !Patterns.EMAIL_ADDRESS.matcher(emailText).matches()) {
-            emailInput.error = getString(R.string.invalid_email)
-            isValid = false
+        var isValid = validate(emailInput, R.string.invalid_email) {
+            TextUtils.isEmpty(it) || !Patterns.EMAIL_ADDRESS.matcher(it).matches()
         }
 
-        val passwordText = passwordInput.text.toString().trim()
-        if (TextUtils.isEmpty(passwordText)) {
-            passwordInput.error = getString(R.string.invalid_password)
-            isValid = false
-        }
+        isValid = validate(passwordInput, R.string.invalid_password) {
+            TextUtils.isEmpty(it)
+        } && isValid
 
         return isValid
+    }
+
+    private fun validate(view: TextView, errorMessageID: Int, isInvalid: (String) -> Boolean): Boolean {
+        val textToValidate = view.text.toString()
+        if (isInvalid(textToValidate)) {
+            view.error = getString(errorMessageID)
+            return false
+        }
+
+        return true
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
@@ -71,8 +76,8 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
     }
 
-    override fun onLoginFailure(message: String) {
+    override fun onLoginFailure(messageID: Int) {
         progressBar.visibility = View.INVISIBLE
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+        Toast.makeText(this, messageID, Toast.LENGTH_SHORT).show()
     }
 }
