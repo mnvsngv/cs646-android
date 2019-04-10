@@ -73,7 +73,8 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
 
     override fun onLoginSuccess() {
         progressBar.visibility = View.INVISIBLE
-        Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
+//        Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
+        startActivity<InstaPostActivity>()
     }
 
     override fun onLoginFailure(messageID: Int) {

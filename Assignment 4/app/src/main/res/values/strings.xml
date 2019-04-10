@@ -24,4 +24,8 @@
     <string name="invalid_name">Please enter your name!</string>
     <string name="registration_success">Created your account! Log in now!</string>
     <string name="user_already_exists">Email already in use!</string>
+    <string name="title_activity_instapost">InstaPostActivity</string>
+    <string name="title_home">Home</string>
+    <string name="title_users_list">Users</string>
+    <string name="title_tags_list">Hashtags</string>
 </resources>

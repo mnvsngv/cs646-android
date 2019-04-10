@@ -41,12 +41,11 @@
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:inputType="textPersonName"
             android:ems="10"
             android:id="@+id/userIDInput" app:layout_constraintTop_toBottomOf="@+id/emailInput"
             app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
             android:layout_margin="@dimen/form_padding" android:hint="@string/user_id_hint"
-            app:layout_constraintBottom_toTopOf="@+id/nameInput"/>
+            app:layout_constraintBottom_toTopOf="@+id/nameInput" android:inputType="text"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
