@@ -10,8 +10,8 @@ import android.view.inputmethod.EditorInfo
 import android.widget.TextView
 import android.widget.Toast
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
+import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_login.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
@@ -20,7 +20,7 @@ import org.jetbrains.anko.startActivity
 
 
 class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
-    private val backend = FirebaseBackend(this, this)
+    private val backend = BackendInstance.getInstance(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

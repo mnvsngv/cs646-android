@@ -15,10 +15,10 @@ import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.fragment.ListType
 import com.mnvsngv.assignment4.fragment.MainFragment
+import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_instapost.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
@@ -34,7 +34,7 @@ private const val URI_KEY = "uri"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener {
 
-    private val backend = FirebaseBackend(this, this)
+    private val backend = BackendInstance.getInstance(this, this)
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
