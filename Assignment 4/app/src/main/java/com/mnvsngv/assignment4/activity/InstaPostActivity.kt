@@ -34,7 +34,7 @@ private const val URI_KEY = "uri"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener {
 
-    private val backend = BackendInstance.getInstance(this, this)
+    private var backend = BackendInstance.getInstance(this, this)
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
@@ -64,6 +64,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_instapost)
 
+
         actionBar?.title = getString(R.string.app_name)
         supportActionBar?.title = getString(R.string.app_name)
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
@@ -71,6 +72,11 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
 //            Toast.makeText(this, "fabulous.", Toast.LENGTH_SHORT).show()
             AddPost.captureImageForNewPost(this)
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        backend = BackendInstance.getInstance(this, this)
     }
 
     // Add the logout button to the action bar
