@@ -9,4 +9,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="text_margin">16dp</dimen>
     <dimen name="fab_padding">15sp</dimen>
+    <dimen name="image_height">420sp</dimen>
+    <dimen name="image_margin">16sp</dimen>
 </resources>

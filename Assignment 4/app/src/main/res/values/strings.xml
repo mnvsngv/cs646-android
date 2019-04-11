@@ -29,4 +29,6 @@
     <string name="title_users_list">Users</string>
     <string name="title_tags_list">Hashtags</string>
     <string name="logout">Logout</string>
+    <string name="submit_post">Done</string>
+    <string name="caption_hint">What\'s this photo all about?</string>
 </resources>

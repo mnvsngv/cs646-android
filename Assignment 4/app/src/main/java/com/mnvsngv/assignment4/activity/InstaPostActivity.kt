@@ -1,12 +1,19 @@
 package com.mnvsngv.assignment4.activity
 
+import android.app.Activity
+import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
+import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
-import android.widget.Toast
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
@@ -18,6 +25,14 @@ import kotlinx.android.synthetic.main.activity_instapost.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
+import org.jetbrains.anko.startActivity
+import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+
+
+private const val REQUEST_IMAGE_CAPTURE = 1
+private const val URI_KEY = "uri"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnListFragmentInteractionListener {
     override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
@@ -57,7 +72,10 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         actionBar?.title = getString(R.string.app_name)
         supportActionBar?.title = getString(R.string.app_name)
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-        addPostFab.setOnClickListener { Toast.makeText(this, "fabulous.", Toast.LENGTH_SHORT).show() }
+        addPostFab.setOnClickListener {
+//            Toast.makeText(this, "fabulous.", Toast.LENGTH_SHORT).show()
+            AddPost.captureImageForNewPost(this)
+        }
     }
 
     // Add the logout button to the action bar
@@ -83,5 +101,54 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     override fun onLogout() {
         startActivity(intentFor<LoginActivity>().newTask().clearTop())
         finish()
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            Log.i("image_test", AddPost.photoURI.toString())
+            startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
+//            val imageBitmap = data?.extras?.get("data") as Bitmap
+
+//            imageView.setImageBitmap(imageBitmap)
+        }
+    }
+
+    private object AddPost {
+        lateinit var photoURI: Uri
+
+        private fun createImageFile(context: Context): File {
+            // Create an image file name
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            return File.createTempFile(
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+            )
+        }
+
+        fun captureImageForNewPost(activity: Activity) {
+            val REQUEST_IMAGE_GET = 2
+
+            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+                takePictureIntent.resolveActivity(activity.packageManager)?.also {
+
+                    val photoFile: File = AddPost.createImageFile(activity)
+
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        activity,
+                        "com.mnvsngv.assignment4.fileprovider",
+                        photoFile
+                    )
+
+                    this.photoURI = photoURI
+
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                }
+            }
+
+//        startActivityForResult<AddPostActivity>(REQUEST_IMAGE_CAPTURE)
+        }
     }
 }

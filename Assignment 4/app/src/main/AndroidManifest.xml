@@ -2,6 +2,14 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
           package="com.mnvsngv.assignment4">
 
+    <uses-feature
+            android:name="android.hardware.camera"
+            android:required="true"/>
+
+    <uses-permission
+            android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+            android:maxSdkVersion="18"/>
+
     <application
             android:allowBackup="true"
             android:icon="@mipmap/ic_launcher"
@@ -9,18 +17,32 @@
             android:roundIcon="@mipmap/ic_launcher_round"
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
+        <activity android:name=".activity.NewPostActivity">
+        </activity>
+
+        <provider
+                android:name="android.support.v4.content.FileProvider"
+                android:authorities="com.mnvsngv.assignment4.fileprovider"
+                android:exported="false"
+                android:grantUriPermissions="true">
+            <meta-data
+                    android:name="android.support.FILE_PROVIDER_PATHS"
+                    android:resource="@xml/file_paths"/>
+        </provider>
+
         <activity
                 android:name=".activity.InstaPostActivity"
                 android:label="@string/title_activity_instapost">
         </activity>
         <activity
                 android:name=".activity.RegisterActivity"
-                android:windowSoftInputMode="adjustResize"
-                android:parentActivityName="com.mnvsngv.assignment4.activity.LoginActivity" >
+                android:parentActivityName=".activity.LoginActivity"
+                android:windowSoftInputMode="adjustResize">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
                     android:name="android.support.PARENT_ACTIVITY"
-                    android:value="com.mnvsngv.assignment4.activity.LoginActivity" />
+                    android:value="com.mnvsngv.assignment4.activity.LoginActivity"/>
         </activity>
         <activity
                 android:name=".activity.LoginActivity"
