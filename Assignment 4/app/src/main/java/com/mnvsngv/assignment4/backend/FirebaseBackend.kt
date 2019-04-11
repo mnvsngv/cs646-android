@@ -4,7 +4,11 @@ import android.app.Activity
 import android.util.Log
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.storage.FirebaseStorage
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.dataclass.Post
+import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.singleton.CurrentSession
 
 
 private const val TAG = "FirebaseBackend"
@@ -14,11 +18,13 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
+    private val storage = FirebaseStorage.getInstance()
 
     override fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener(baseActivity) {
                 if (it.isSuccessful) {
+                    getUserData(email)
                     listener.onLoginSuccess()
                 } else {
                     handleLoginException(it.exception)
@@ -48,6 +54,12 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         listener.onLogout()
     }
 
+    override fun uploadNewPost(post: Post) {
+        val storageRef = storage.reference
+        val photoRef = storageRef.child("${post.userID}/${post.photoUri.lastPathSegment}")
+        photoRef.putFile(post.photoUri)
+    }
+
     private fun registerAndCreateUser(email: String, userID: String, name: String) {
         // Create a new user with a first and last name
         val user = HashMap<String, Any>()
@@ -56,10 +68,10 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         user["name"] = name
 
         // Add a new document with a generated ID
-        db.collection(USERS_COLLECTION)
-            .add(user)
+        db.collection(USERS_COLLECTION).document(email)
+            .set(user)
             .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot added with ID: ${documentReference.id}")
+                Log.d(TAG, "DocumentSnapshot added with ID: $email")
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
@@ -72,9 +84,7 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         when (exception) {
             // User doesn't exist
             is FirebaseAuthInvalidUserException -> {
-                if (exception.errorCode == "ERROR_USER_NOT_FOUND") {
-                    listener.onLoginFailure(R.string.invalid_user)
-                }
+                listener.onLoginFailure(R.string.invalid_user)
             }
 
             // Incorrect password
@@ -99,6 +109,22 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
                 listener.onRegisterFailure(R.string.user_already_exists)
             }
         }
+    }
+
+    private fun getUserData(userID: String) {
+        val docRef = db.collection(USERS_COLLECTION).document(userID)
+        docRef.get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    CurrentSession.user = document.toObject(User::class.java)
+                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
+                } else {
+                    Log.d(TAG, "No such document")
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "get failed with ", exception)
+            }
     }
 
 }

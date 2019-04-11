@@ -17,10 +17,8 @@ import android.view.MenuItem
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
+import com.mnvsngv.assignment4.fragment.ListType
 import com.mnvsngv.assignment4.fragment.MainFragment
-import com.mnvsngv.assignment4.fragment.PostRecyclerViewAdapter
-import com.mnvsngv.assignment4.fragment.UserRecyclerViewAdapter
-import com.mnvsngv.assignment4.fragment.dummy.DummyContent
 import kotlinx.android.synthetic.main.activity_instapost.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
@@ -34,10 +32,7 @@ import java.util.*
 private const val REQUEST_IMAGE_CAPTURE = 1
 private const val URI_KEY = "uri"
 
-class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnListFragmentInteractionListener {
-    override fun onListFragmentInteraction(item: DummyContent.DummyItem?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+class InstaPostActivity : AppCompatActivity(), IBackendListener {
 
     private val backend = FirebaseBackend(this, this)
 
@@ -46,14 +41,14 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
             R.id.navigation_home -> {
                 addPostFab.show()
                 val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(1, PostRecyclerViewAdapter(DummyContent.ITEMS, this)))
+                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS))
                 transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
                 addPostFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(1, UserRecyclerViewAdapter(DummyContent.ITEMS, this)))
+                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.USERS))
                 transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }

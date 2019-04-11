@@ -2,29 +2,24 @@ package com.mnvsngv.assignment4.fragment
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
-import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.fragment.dummy.DummyContent
 import com.mnvsngv.assignment4.fragment.dummy.DummyContent.DummyItem
-import java.io.Serializable
 
 
 class MainFragment : Fragment() {
 
-    // TODO: Customize parameters
-    private var columnCount = 1
-    private lateinit var suppliedAdapter: RecyclerView.Adapter<*>
+    private lateinit var listType: ListType
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
-            columnCount = it.getInt(ARG_COLUMN_COUNT)
-            suppliedAdapter = it.getSerializable(ARG_ADAPTER) as RecyclerView.Adapter<*>
+            listType = it.getSerializable(ARG_ADAPTER_TYPE) as ListType
         }
     }
 
@@ -37,11 +32,11 @@ class MainFragment : Fragment() {
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-                layoutManager = when {
-                    columnCount <= 1 -> LinearLayoutManager(context)
-                    else -> GridLayoutManager(context, columnCount)
+                adapter = when(listType) {
+                    ListType.POSTS -> PostRecyclerViewAdapter(DummyContent.ITEMS)
+                    ListType.USERS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
+                    ListType.HASHTAGS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
                 }
-                adapter = suppliedAdapter
             }
         }
         return view
@@ -67,15 +62,14 @@ class MainFragment : Fragment() {
 
         // TODO: Customize parameter argument names
         const val ARG_COLUMN_COUNT = "column-count"
-        const val ARG_ADAPTER = "adapter"
+        const val ARG_ADAPTER_TYPE = "adapter-type"
 
         // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(columnCount: Int, adapter: Serializable) =
+        fun newInstance(listType: ListType) =
             MainFragment().apply {
                 arguments = Bundle().apply {
-                    putInt(ARG_COLUMN_COUNT, columnCount)
-                    putSerializable(ARG_ADAPTER, adapter)
+                    putSerializable(ARG_ADAPTER_TYPE, listType)
                 }
             }
     }
