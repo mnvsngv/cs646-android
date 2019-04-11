@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -106,30 +105,14 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            Log.i("image_test", AddPost.photoURI.toString())
             startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
-//            val imageBitmap = data?.extras?.get("data") as Bitmap
-
-//            imageView.setImageBitmap(imageBitmap)
         }
     }
 
     private object AddPost {
         lateinit var photoURI: Uri
 
-        private fun createImageFile(context: Context): File {
-            // Create an image file name
-            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
-            val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            return File.createTempFile(
-                "JPEG_${timeStamp}_", /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
-            )
-        }
-
         fun captureImageForNewPost(activity: Activity) {
-            val REQUEST_IMAGE_GET = 2
 
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 takePictureIntent.resolveActivity(activity.packageManager)?.also {
@@ -143,6 +126,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
                     )
 
                     this.photoURI = photoURI
+                    addPictureToGallery(activity)
 
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
@@ -150,6 +134,25 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
             }
 
 //        startActivityForResult<AddPostActivity>(REQUEST_IMAGE_CAPTURE)
+        }
+
+        private fun createImageFile(context: Context): File {
+            // Create an image file name
+            val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
+            val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+            return File.createTempFile(
+                "JPEG_${timeStamp}_", /* prefix */
+                ".jpg", /* suffix */
+                storageDir /* directory */
+            )
+        }
+
+        private fun addPictureToGallery(activity: Activity) {
+            Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
+                val f = File(this.photoURI.path)
+                mediaScanIntent.data = Uri.fromFile(f)
+                activity.sendBroadcast(mediaScanIntent)
+            }
         }
     }
 }

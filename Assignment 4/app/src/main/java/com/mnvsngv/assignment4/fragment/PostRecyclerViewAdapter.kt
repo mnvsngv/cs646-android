@@ -14,8 +14,8 @@ import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.dataclass.Post
 import kotlinx.android.synthetic.main.fragment_post.view.*
-import org.jetbrains.anko.imageBitmap
 import java.lang.ref.WeakReference
+import java.nio.ByteBuffer
 
 
 private const val TAG = "PostAdapter"
@@ -64,16 +64,63 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
     }
 
 
-    class DownloadImageTask(photoView: ImageView) : AsyncTask<String, Void, Bitmap>() {
+    class DownloadImageTask(photoView: ImageView) : AsyncTask<String, Void, ByteArray>() {
         private var weakPhotoView: WeakReference<ImageView> = WeakReference(photoView)
 
-        override fun doInBackground(vararg params: String?): Bitmap {
+        override fun doInBackground(vararg params: String?): ByteArray {
             val inputStream = java.net.URL(params[0]).openStream()
-            return BitmapFactory.decodeStream(inputStream)
+            val bitmap = BitmapFactory.decodeStream(inputStream)
+
+            val byteBuffer = ByteBuffer.allocate(bitmap.byteCount);
+            bitmap.copyPixelsToBuffer(byteBuffer);
+            return byteBuffer.array()
         }
 
-        override fun onPostExecute(result: Bitmap?) {
-            weakPhotoView.get()?.imageBitmap = result
+        override fun onPostExecute(result: ByteArray?) {
+//            weakPhotoView.get()?.imageBitmap = result
+
+            val photoView = weakPhotoView.get()
+            if (photoView != null && result != null) {
+                photoView.setImageBitmap(
+                    decodeSampledBitmapFromByteArray(result, photoView.width, photoView.height)
+                )
+            }
+        }
+
+        private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+            // Raw height and width of image
+            val (height: Int, width: Int) = options.run { outHeight to outWidth }
+            var inSampleSize = 1
+
+            if (height > reqHeight || width > reqWidth) {
+
+                val halfHeight: Int = height / 2
+                val halfWidth: Int = width / 2
+
+                // Calculate the largest inSampleSize value that is a power of 2 and keeps both
+                // height and width larger than the requested height and width.
+                while (halfHeight / inSampleSize >= reqHeight && halfWidth / inSampleSize >= reqWidth) {
+                    inSampleSize *= 2
+                }
+            }
+
+            return inSampleSize
+        }
+
+        private fun decodeSampledBitmapFromByteArray(array: ByteArray, reqWidth: Int, reqHeight: Int): Bitmap {
+            // First decode with inJustDecodeBounds=true to check dimensions
+            return BitmapFactory.Options().run {
+                inJustDecodeBounds = true
+                BitmapFactory.decodeByteArray(array,0, array.size, this)
+
+                // Calculate inSampleSize
+                inSampleSize = calculateInSampleSize(this, reqWidth, reqHeight)
+
+                // Decode bitmap with inSampleSize set
+                inJustDecodeBounds = false
+
+                BitmapFactory.decodeByteArray(array,0, array.size, this)
+            }
         }
 
     }
