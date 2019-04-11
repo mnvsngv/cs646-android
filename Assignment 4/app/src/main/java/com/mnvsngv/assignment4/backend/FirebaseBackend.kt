@@ -1,6 +1,7 @@
 package com.mnvsngv.assignment4.backend
 
 import android.app.Activity
+import android.net.Uri
 import android.util.Log
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
@@ -13,6 +14,7 @@ import com.mnvsngv.assignment4.singleton.CurrentSession
 
 private const val TAG = "FirebaseBackend"
 private const val USERS_COLLECTION = "Users"
+private const val POSTS_COLLECTION = "Posts"
 
 class FirebaseBackend(private val baseActivity: Activity, private val listener: IBackendListener): IBackend {
 
@@ -54,10 +56,26 @@ class FirebaseBackend(private val baseActivity: Activity, private val listener: 
         listener.onLogout()
     }
 
-    override fun uploadNewPost(post: Post) {
+    override fun uploadNewPost(post: Post, photoUri: Uri) {
         val storageRef = storage.reference
-        val photoRef = storageRef.child("${post.userID}/${post.photoUri.lastPathSegment}")
-        photoRef.putFile(post.photoUri)
+        val photoRef = storageRef.child("${post.userID}/${post.photoFileName}")
+
+        // Upload file
+        photoRef.putFile(photoUri)
+            .addOnProgressListener {
+                val progress = it.bytesTransferred * 100 / it.totalByteCount
+                listener.onUpdateUploadProgress(progress.toInt())
+            }
+            .addOnCompleteListener {
+                // Once the file is uploaded, add the post metadata
+                db.collection(POSTS_COLLECTION).document(post.userID)
+                    .collection(POSTS_COLLECTION).document(post.photoFileName)
+                    .set(post)
+                    .addOnSuccessListener {
+                        // And once this is done, we can inform the parent activity
+                        listener.onUploadSuccess()
+                    }
+        }
     }
 
     private fun registerAndCreateUser(email: String, userID: String, name: String) {

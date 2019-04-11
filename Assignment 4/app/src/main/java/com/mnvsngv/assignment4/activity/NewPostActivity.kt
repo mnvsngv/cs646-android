@@ -1,8 +1,10 @@
 package com.mnvsngv.assignment4.activity
 
+import android.animation.ObjectAnimator
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
+import android.view.View
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
@@ -26,11 +28,26 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
         postImage.setImageURI(photoUri)
         submitPostButton.setOnClickListener {
             if (CurrentSession.user != null) {
+                uploadProgressBar.visibility = View.VISIBLE
                 val id = (CurrentSession.user as User).userID
-                val post = Post(id, photoUri, captionInput.text.toString())
-                backend.uploadNewPost(post)
+
+                val fileName = photoUri.lastPathSegment
+                if (fileName != null) {
+                    val post = Post(id, fileName, captionInput.text.toString())
+                    backend.uploadNewPost(post, photoUri)
+                }
             }
-            finish()
         }
+    }
+
+    override fun onUpdateUploadProgress(progress: Int) {
+        ObjectAnimator.ofInt(uploadProgressBar, "progress", progress)
+            .setDuration(750)
+            .start();
+    }
+
+    override fun onUploadSuccess() {
+        uploadProgressBar.visibility = View.INVISIBLE
+        finish()
     }
 }

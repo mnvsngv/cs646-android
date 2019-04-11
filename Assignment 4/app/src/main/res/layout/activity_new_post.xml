@@ -7,6 +7,13 @@
         android:layout_height="match_parent"
         tools:context=".activity.NewPostActivity">
 
+    <ProgressBar
+            style="?android:attr/progressBarStyleHorizontal"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:id="@+id/uploadProgressBar" app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent" app:layout_constraintTop_toTopOf="parent"
+            android:visibility="invisible" android:indeterminate="false"/>
     <ImageView
             android:layout_width="wrap_content"
             android:layout_height="@dimen/image_height" tools:srcCompat="@tools:sample/avatars"

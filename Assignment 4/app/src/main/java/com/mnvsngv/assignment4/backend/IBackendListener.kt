@@ -6,4 +6,6 @@ interface IBackendListener {
     fun onRegisterSuccess() {}
     fun onRegisterFailure(messageID: Int) {}
     fun onLogout() {}
+    fun onUploadSuccess() {}
+    fun onUpdateUploadProgress(progress: Int) {}
 }
