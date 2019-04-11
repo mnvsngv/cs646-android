@@ -30,7 +30,7 @@ import java.util.*
 
 
 private const val REQUEST_IMAGE_CAPTURE = 1
-private const val URI_KEY = "uri"
+private const val URI_KEY = "uriString"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener {
 

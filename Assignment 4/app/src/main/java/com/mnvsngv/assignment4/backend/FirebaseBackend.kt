@@ -3,9 +3,12 @@ package com.mnvsngv.assignment4.backend
 import android.app.Activity
 import android.net.Uri
 import android.util.Log
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.UploadTask
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.dataclass.Post
 import com.mnvsngv.assignment4.dataclass.User
@@ -66,16 +69,37 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                 val progress = it.bytesTransferred * 100 / it.totalByteCount
                 listener.onUpdateUploadProgress(progress.toInt())
             }
+            .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+                return@Continuation photoRef.downloadUrl
+            })
             .addOnCompleteListener {
                 // Once the file is uploaded, add the post metadata
-                db.collection(POSTS_COLLECTION).document(post.userID)
-                    .collection(POSTS_COLLECTION).document(post.photoFileName)
+                post.uriString = it.result.toString()
+                db.collection(POSTS_COLLECTION).document(post.photoFileName)
                     .set(post)
                     .addOnSuccessListener {
                         // And once this is done, we can inform the parent activity
                         listener.onUploadSuccess()
                     }
         }
+    }
+
+    override fun getAllPosts() {
+        db.collection(POSTS_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                val posts = arrayListOf<Post>()
+                val storageRef = storage.reference
+                for (document in result) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    val post = document.toObject(Post::class.java)
+                    posts.add(post)
+                }
+                listener.onGetAllPosts(posts)
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
     }
 
     private fun registerAndCreateUser(email: String, userID: String, name: String) {

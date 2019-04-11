@@ -1,5 +1,7 @@
 package com.mnvsngv.assignment4.backend
 
+import com.mnvsngv.assignment4.dataclass.Post
+
 interface IBackendListener {
     fun onLoginSuccess() {}
     fun onLoginFailure(messageID: Int) {}
@@ -8,4 +10,5 @@ interface IBackendListener {
     fun onLogout() {}
     fun onUploadSuccess() {}
     fun onUpdateUploadProgress(progress: Int) {}
+    fun onGetAllPosts(posts: List<Post>) {}
 }

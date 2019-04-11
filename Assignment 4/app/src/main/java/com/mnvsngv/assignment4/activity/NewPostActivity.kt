@@ -14,7 +14,7 @@ import com.mnvsngv.assignment4.singleton.CurrentSession
 import kotlinx.android.synthetic.main.activity_new_post.*
 
 
-private const val URI_KEY = "uri"
+private const val URI_KEY = "uriString"
 
 class NewPostActivity : AppCompatActivity(), IBackendListener {
 

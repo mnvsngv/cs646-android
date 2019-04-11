@@ -1,5 +1,7 @@
 package com.mnvsngv.assignment4.fragment
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
@@ -7,13 +9,18 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.backend.IBackend
+import com.mnvsngv.assignment4.backend.IBackendListener
+import com.mnvsngv.assignment4.dataclass.Post
 import com.mnvsngv.assignment4.fragment.dummy.DummyContent
 import com.mnvsngv.assignment4.fragment.dummy.DummyContent.DummyItem
+import com.mnvsngv.assignment4.singleton.BackendInstance
 
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), IBackendListener {
 
     private lateinit var listType: ListType
+    private lateinit var backend: IBackend
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -21,6 +28,11 @@ class MainFragment : Fragment() {
         arguments?.let {
             listType = it.getSerializable(ARG_ADAPTER_TYPE) as ListType
         }
+    }
+
+    override fun onAttach(context: Context?) {
+        super.onAttach(context)
+        backend = BackendInstance.getInstance(context as Activity, this)
     }
 
     override fun onCreateView(
@@ -33,13 +45,24 @@ class MainFragment : Fragment() {
         if (view is RecyclerView) {
             with(view) {
                 adapter = when(listType) {
-                    ListType.POSTS -> PostRecyclerViewAdapter(DummyContent.ITEMS)
+                    ListType.POSTS -> {
+                        backend.getAllPosts()
+                        PostRecyclerViewAdapter(emptyList())
+                    }
                     ListType.USERS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
                     ListType.HASHTAGS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
                 }
             }
         }
         return view
+    }
+
+    override fun onGetAllPosts(posts: List<Post>) {
+        if (view is RecyclerView) {
+            with(view as RecyclerView) {
+                adapter = PostRecyclerViewAdapter(posts)
+            }
+        }
     }
 
     /**

@@ -11,4 +11,5 @@
     <dimen name="fab_padding">15sp</dimen>
     <dimen name="image_height">420sp</dimen>
     <dimen name="image_margin">16sp</dimen>
+    <dimen name="post_photo_height">350sp</dimen>
 </resources>

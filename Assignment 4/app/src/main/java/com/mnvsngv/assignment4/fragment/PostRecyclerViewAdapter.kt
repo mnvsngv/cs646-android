@@ -1,33 +1,33 @@
 package com.mnvsngv.assignment4.fragment
 
+
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.os.AsyncTask
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import com.mnvsngv.assignment4.R
-
-
-import com.mnvsngv.assignment4.fragment.MainFragment.OnListFragmentInteractionListener
-import com.mnvsngv.assignment4.fragment.dummy.DummyContent.DummyItem
-
+import com.mnvsngv.assignment4.backend.IBackendListener
+import com.mnvsngv.assignment4.dataclass.Post
 import kotlinx.android.synthetic.main.fragment_post.view.*
-import java.io.Serializable
+import org.jetbrains.anko.imageBitmap
+import java.lang.ref.WeakReference
 
-/**
- * [RecyclerView.Adapter] that can display a [DummyItem] and makes a call to the
- * specified [OnListFragmentInteractionListener].
- * TODO: Replace the implementation with code for your data type.
- */
-class PostRecyclerViewAdapter(
-    private val mValues: List<DummyItem>
-) : RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>(), Serializable {
+
+private const val TAG = "PostAdapter"
+
+class PostRecyclerViewAdapter(private val posts: List<Post>) :
+        RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>(), IBackendListener {
 
     private val mOnClickListener: View.OnClickListener
 
     init {
         mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as DummyItem
+            val item = v.tag as Post
             // Notify the active callbacks interface (the activity, if the fragment is attached to
             // one) that an item has been selected.
         }
@@ -40,24 +40,41 @@ class PostRecyclerViewAdapter(
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = mValues[position]
-        holder.mIdView.text = item.id
-        holder.mContentView.text = item.content
+        val post = posts[position]
+        holder.userIDView.text = post.userID
+        holder.captionView.text = post.caption
+        DownloadImageTask(holder.photoView).execute(post.uriString)
 
-        with(holder.mView) {
-            tag = item
+        with(holder.view) {
+            tag = post
             setOnClickListener(mOnClickListener)
         }
     }
 
-    override fun getItemCount(): Int = mValues.size
+    override fun getItemCount(): Int = posts.size
 
-    inner class ViewHolder(val mView: View) : RecyclerView.ViewHolder(mView) {
-        val mIdView: TextView = mView.item_number
-        val mContentView: TextView = mView.content
+    inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+        val userIDView: TextView = view.user_id
+        val captionView: TextView = view.caption
+        val photoView: ImageView = view.post_photo
 
         override fun toString(): String {
-            return super.toString() + " '" + mContentView.text + "'"
+            return super.toString() + " '" + captionView.text + "'"
         }
+    }
+
+
+    class DownloadImageTask(photoView: ImageView) : AsyncTask<String, Void, Bitmap>() {
+        private var weakPhotoView: WeakReference<ImageView> = WeakReference(photoView)
+
+        override fun doInBackground(vararg params: String?): Bitmap {
+            val inputStream = java.net.URL(params[0]).openStream()
+            return BitmapFactory.decodeStream(inputStream)
+        }
+
+        override fun onPostExecute(result: Bitmap?) {
+            weakPhotoView.get()?.imageBitmap = result
+        }
+
     }
 }

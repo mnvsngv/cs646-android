@@ -9,4 +9,5 @@ interface IBackend {
     fun logout()
     fun isUserLoggedIn(): Boolean
     fun uploadNewPost(post: Post, photoUri: Uri)
+    fun getAllPosts()
 }
