@@ -75,7 +75,11 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
     override fun onResume() {
         super.onResume()
         backend = BackendInstance.getInstance(this, this)
+
+        // TODO prevent this from refreshing every time!
+
         onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
+        navigation.selectedItemId = R.id.navigation_home
     }
 
     // Add the logout button to the action bar
@@ -133,7 +137,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
                 }
             }
 
-//        startActivityForResult<AddPostActivity>(REQUEST_IMAGE_CAPTURE)
         }
 
         private fun createImageFile(context: Context): File {

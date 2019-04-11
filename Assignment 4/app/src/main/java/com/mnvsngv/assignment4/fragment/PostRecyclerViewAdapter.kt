@@ -9,7 +9,6 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.dataclass.Post
 import kotlinx.android.synthetic.main.fragment_post.view.*
 
@@ -17,7 +16,7 @@ import kotlinx.android.synthetic.main.fragment_post.view.*
 private const val TAG = "PostAdapter"
 
 class PostRecyclerViewAdapter(private val posts: List<Post>) :
-        RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>(), IBackendListener {
+        RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>() {
 
     private val mOnClickListener: View.OnClickListener
 

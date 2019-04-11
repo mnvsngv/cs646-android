@@ -9,24 +9,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.activity.LoginActivity
+import com.mnvsngv.assignment4.activity.UserPostsActivity
 import com.mnvsngv.assignment4.backend.IBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.dataclass.Post
-import com.mnvsngv.assignment4.fragment.dummy.DummyContent
-import com.mnvsngv.assignment4.fragment.dummy.DummyContent.DummyItem
+import com.mnvsngv.assignment4.dataclass.User
 import com.mnvsngv.assignment4.singleton.BackendInstance
+import org.jetbrains.anko.clearTop
+import org.jetbrains.anko.newTask
+import org.jetbrains.anko.support.v4.intentFor
+import org.jetbrains.anko.support.v4.startActivity
 
 
-class MainFragment : Fragment(), IBackendListener {
+class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserAdapterOnClickListener {
 
     private lateinit var listType: ListType
     private lateinit var backend: IBackend
+    private var user: User? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         arguments?.let {
             listType = it.getSerializable(ARG_ADAPTER_TYPE) as ListType
+            user = it.getSerializable(ARG_USER) as User?
         }
     }
 
@@ -46,15 +53,27 @@ class MainFragment : Fragment(), IBackendListener {
             with(view) {
                 adapter = when(listType) {
                     ListType.POSTS -> {
-                        backend.getAllPosts()
+                        if (user != null) {
+                            backend.getAllPostsFor(user as User)
+                        } else {
+                            backend.getAllPosts()
+                        }
                         PostRecyclerViewAdapter(emptyList())
                     }
-                    ListType.USERS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
-                    ListType.HASHTAGS -> UserRecyclerViewAdapter(DummyContent.ITEMS)
+                    ListType.USERS -> {
+                        backend.getAllUsers()
+                        UserRecyclerViewAdapter(emptyList(), this@MainFragment)
+                    }
+                    ListType.HASHTAGS -> PostRecyclerViewAdapter(emptyList())
                 }
             }
         }
         return view
+    }
+
+    override fun onLogout() {
+        startActivity(intentFor<LoginActivity>().newTask().clearTop())
+        activity?.finish()
     }
 
     override fun onGetAllPosts(posts: List<Post>) {
@@ -65,34 +84,38 @@ class MainFragment : Fragment(), IBackendListener {
         }
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     *
-     *
-     * See the Android Training lesson
-     * [Communicating with Other Fragments](http://developer.android.com/training/basics/fragments/communicating.html)
-     * for more information.
-     */
-    interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        fun onListFragmentInteraction(item: DummyItem?)
+    override fun onGetAllPostsForUser(posts: List<Post>) {
+        if (view is RecyclerView) {
+            with(view as RecyclerView) {
+                adapter = PostRecyclerViewAdapter(posts)
+            }
+        }
+    }
+
+    override fun onGetAllUsers(users: List<User>) {
+        if (view is RecyclerView) {
+            with(view as RecyclerView) {
+                adapter = UserRecyclerViewAdapter(users, this@MainFragment)
+            }
+        }
+
+    }
+
+    override fun handleUserClicked(user: User) {
+        startActivity<UserPostsActivity>(ARG_USER to user)
     }
 
     companion object {
 
-        // TODO: Customize parameter argument names
-        const val ARG_COLUMN_COUNT = "column-count"
         const val ARG_ADAPTER_TYPE = "adapter-type"
+        const val ARG_USER = "user"
 
-        // TODO: Customize parameter initialization
         @JvmStatic
-        fun newInstance(listType: ListType) =
+        fun newInstance(listType: ListType, user: User? = null) =
             MainFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_ADAPTER_TYPE, listType)
+                    putSerializable(ARG_USER, user)
                 }
             }
     }

@@ -20,13 +20,11 @@ import org.jetbrains.anko.startActivity
 
 
 class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
-    private val backend = BackendInstance.getInstance(this, this)
+    private var backend = BackendInstance.getInstance(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-//        if (backend.isUserLoggedIn()) onLoginSuccess()
 
         loginButton.setOnClickListener {
             if (areInputsValid()) {
@@ -40,6 +38,12 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         }
 
         passwordInput.setOnEditorActionListener(this)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        backend = BackendInstance.getInstance(this, this)
+
     }
 
     private fun areInputsValid(): Boolean {

@@ -7,6 +7,8 @@ import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.mnvsngv.assignment4.R
@@ -18,6 +20,7 @@ import com.mnvsngv.assignment4.singleton.CurrentSession
 private const val TAG = "FirebaseBackend"
 private const val USERS_COLLECTION = "Users"
 private const val POSTS_COLLECTION = "Posts"
+private const val HASHTAGS_COLLECTION = "Hashtags"
 
 class FirebaseBackend(private val baseActivity: Activity, var listener: IBackendListener): IBackend {
 
@@ -59,7 +62,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         listener.onLogout()
     }
 
-    override fun uploadNewPost(post: Post, photoUri: Uri) {
+    override fun uploadNewPost(post: Post, photoUri: Uri, hashtags: List<String>) {
         val storageRef = storage.reference
         val photoRef = storageRef.child("${post.userID}/${post.photoFileName}")
 
@@ -75,6 +78,12 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .addOnCompleteListener {
                 // Once the file is uploaded, add the post metadata
                 post.uriString = it.result.toString()
+
+                for (hashtag in hashtags) {
+                    db.collection(HASHTAGS_COLLECTION).document(hashtag)
+                        .set(mapOf(post.photoFileName to ""), SetOptions.merge())
+                }
+
                 db.collection(POSTS_COLLECTION).document(post.photoFileName)
                     .set(post)
                     .addOnSuccessListener {
@@ -86,16 +95,52 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
 
     override fun getAllPosts() {
         db.collection(POSTS_COLLECTION)
+            .orderBy("photoFileName", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val posts = arrayListOf<Post>()
-                val storageRef = storage.reference
                 for (document in result) {
                     Log.d(TAG, "${document.id} => ${document.data}")
                     val post = document.toObject(Post::class.java)
                     posts.add(post)
                 }
                 listener.onGetAllPosts(posts)
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+    }
+
+    override fun getAllPostsFor(user: User) {
+        db.collection(POSTS_COLLECTION)
+            .whereEqualTo("userID", user.userID)
+            .orderBy("photoFileName", Query.Direction.DESCENDING)
+            .get()
+            .addOnSuccessListener { result ->
+                val posts = arrayListOf<Post>()
+                for (document in result) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    val post = document.toObject(Post::class.java)
+                    posts.add(post)
+                }
+                listener.onGetAllPostsForUser(posts)
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+    }
+
+    override fun getAllUsers() {
+        db.collection(USERS_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                val users = arrayListOf<User>()
+                for (document in result) {
+                    Log.d(TAG, "${document.id} => ${document.data}")
+                    val user = document.toObject(User::class.java)
+                    users.add(user)
+                }
+                listener.onGetAllUsers(users)
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "Error getting documents: ", exception)

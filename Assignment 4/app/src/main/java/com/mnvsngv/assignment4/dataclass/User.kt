@@ -1,5 +1,7 @@
 package com.mnvsngv.assignment4.dataclass
 
-data class User(val email: String, val userID: String, val name: String) {
+import java.io.Serializable
+
+data class User(val email: String, val userID: String, val name: String) : Serializable {
     constructor() : this("", "", "")
 }

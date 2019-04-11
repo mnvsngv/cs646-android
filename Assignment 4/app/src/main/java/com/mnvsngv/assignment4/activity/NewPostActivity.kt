@@ -14,6 +14,7 @@ import com.mnvsngv.assignment4.singleton.CurrentSession
 import kotlinx.android.synthetic.main.activity_new_post.*
 
 
+private const val TAG = "NewPost"
 private const val URI_KEY = "uriString"
 
 class NewPostActivity : AppCompatActivity(), IBackendListener {
@@ -34,7 +35,7 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
                 val fileName = photoUri.lastPathSegment
                 if (fileName != null) {
                     val post = Post(id, fileName, captionInput.text.toString())
-                    backend.uploadNewPost(post, photoUri)
+                    backend.uploadNewPost(post, photoUri, findHashtagsIn(post.caption))
                 }
             }
         }
@@ -49,5 +50,24 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
     override fun onUploadSuccess() {
         uploadProgressBar.visibility = View.INVISIBLE
         finish()
+    }
+
+    private fun findHashtagsIn(caption: String): List<String> {
+        val hashtags = arrayListOf<String>()
+
+        var index = caption.indexOf('#')
+        while (index >= 0) {
+
+            var length = 0
+            index++
+            while (index+length < caption.length && caption[index+length].isLetterOrDigit()) {
+                length++
+            }
+            if (length != 0) hashtags.add(caption.substring(index, index + length))
+
+            index = caption.indexOf('#', index)
+        }
+
+        return hashtags
     }
 }
