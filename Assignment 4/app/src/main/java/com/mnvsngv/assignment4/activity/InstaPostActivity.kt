@@ -63,12 +63,11 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_instapost)
 
-
         actionBar?.title = getString(R.string.app_name)
         supportActionBar?.title = getString(R.string.app_name)
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+
         addPostFab.setOnClickListener {
-//            Toast.makeText(this, "fabulous.", Toast.LENGTH_SHORT).show()
             AddPost.captureImageForNewPost(this)
         }
     }
@@ -76,6 +75,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
     override fun onResume() {
         super.onResume()
         backend = BackendInstance.getInstance(this, this)
+        onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
     }
 
     // Add the logout button to the action bar
