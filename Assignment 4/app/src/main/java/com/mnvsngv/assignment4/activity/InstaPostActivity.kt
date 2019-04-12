@@ -53,6 +53,9 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
             }
             R.id.navigation_notifications -> {
                 addPostFab.hide()
+                val transaction = supportFragmentManager.beginTransaction()
+                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.HASHTAGS))
+                transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }
         }

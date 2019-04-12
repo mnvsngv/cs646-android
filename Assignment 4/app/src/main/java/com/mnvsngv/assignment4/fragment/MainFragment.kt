@@ -5,10 +5,12 @@ import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.activity.HashtagPostsActivity
 import com.mnvsngv.assignment4.activity.LoginActivity
 import com.mnvsngv.assignment4.activity.UserPostsActivity
 import com.mnvsngv.assignment4.backend.IBackend
@@ -22,11 +24,18 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
-class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserAdapterOnClickListener {
+private const val TAG = "MainFragment"
+
+class MainFragment : Fragment(), IBackendListener,
+    UserRecyclerViewAdapter.UserAdapterOnClickListener,
+    HashtagRecyclerViewAdapter.HashtagAdapterOnClickListener {
 
     private lateinit var listType: ListType
     private lateinit var backend: IBackend
     private var user: User? = null
+    private var hashtag: String? = null
+    private val hashtagPosts = arrayListOf<Post>()
+    private var numberOfHashtagPosts = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,6 +43,7 @@ class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserA
         arguments?.let {
             listType = it.getSerializable(ARG_ADAPTER_TYPE) as ListType
             user = it.getSerializable(ARG_USER) as User?
+            hashtag = it.getString(ARG_HASHTAG)
         }
     }
 
@@ -55,6 +65,8 @@ class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserA
                     ListType.POSTS -> {
                         if (user != null) {
                             backend.getAllPostsFor(user as User)
+                        } else if(hashtag != null) {
+                            backend.getAllPostsFor(hashtag as String)
                         } else {
                             backend.getAllPosts()
                         }
@@ -64,7 +76,10 @@ class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserA
                         backend.getAllUsers()
                         UserRecyclerViewAdapter(emptyList(), this@MainFragment)
                     }
-                    ListType.HASHTAGS -> PostRecyclerViewAdapter(emptyList())
+                    ListType.HASHTAGS -> {
+                        backend.getAllHashtags()
+                        HashtagRecyclerViewAdapter(emptyList(), this@MainFragment)
+                    }
                 }
             }
         }
@@ -101,21 +116,63 @@ class MainFragment : Fragment(), IBackendListener, UserRecyclerViewAdapter.UserA
 
     }
 
+    override fun onGetAllHashtags(hashtags: List<String>) {
+        if (view is RecyclerView) {
+            with(view as RecyclerView) {
+                adapter = HashtagRecyclerViewAdapter(hashtags, this@MainFragment)
+            }
+        }
+    }
+
+    override fun onGetAllPostsForHashtag(postIDs: List<String>) {
+        if (view is RecyclerView) {
+            with(view as RecyclerView) {
+                Log.i(TAG, "Creating adapter")
+                adapter = PostRecyclerViewAdapter(hashtagPosts)
+            }
+        }
+        numberOfHashtagPosts = postIDs.size
+        Log.i(TAG, "Need to get $numberOfHashtagPosts posts")
+        for (postID in postIDs) {
+            Log.i(TAG, "Getting $postID...")
+            backend.getPost(postID)
+        }
+    }
+
+    override fun onGetPost(post: Post) {
+        Log.i(TAG, "Adding ${post.photoFileName}")
+        hashtagPosts.add(post)
+        if (hashtagPosts.size == numberOfHashtagPosts) {
+            Log.i(TAG, "Added all posts!")
+            if (view is RecyclerView) {
+                with(view as RecyclerView) {
+                    adapter?.notifyDataSetChanged()
+                }
+            }
+        }
+    }
+
     override fun handleUserClicked(user: User) {
         startActivity<UserPostsActivity>(ARG_USER to user)
+    }
+
+    override fun handleHashtagClicked(hashtag: String) {
+        startActivity<HashtagPostsActivity>(ARG_HASHTAG to hashtag)
     }
 
     companion object {
 
         const val ARG_ADAPTER_TYPE = "adapter-type"
         const val ARG_USER = "user"
+        const val ARG_HASHTAG = "hashtag"
 
         @JvmStatic
-        fun newInstance(listType: ListType, user: User? = null) =
+        fun newInstance(listType: ListType, user: User? = null, hashtag: String? = null) =
             MainFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_ADAPTER_TYPE, listType)
                     putSerializable(ARG_USER, user)
+                    putString(ARG_HASHTAG, hashtag)
                 }
             }
     }

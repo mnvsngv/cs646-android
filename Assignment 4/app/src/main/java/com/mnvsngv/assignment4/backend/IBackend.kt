@@ -10,7 +10,10 @@ interface IBackend {
     fun logout()
     fun isUserLoggedIn(): Boolean
     fun uploadNewPost(post: Post, photoUri: Uri, hashtags: List<String>)
+    fun getPost(postID: String)
+    fun getAllUsers()
     fun getAllPosts()
     fun getAllPostsFor(user: User)
-    fun getAllUsers()
+    fun getAllHashtags()
+    fun getAllPostsFor(hashtag: String)
 }

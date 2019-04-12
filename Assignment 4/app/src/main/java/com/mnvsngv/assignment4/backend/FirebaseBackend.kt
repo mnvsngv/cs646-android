@@ -93,6 +93,21 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         }
     }
 
+    override fun getPost(postID: String) {
+        db.collection(POSTS_COLLECTION).document(postID)
+            .get()
+            .addOnSuccessListener { result ->
+                val post = result.toObject(Post::class.java)
+                Log.i(TAG, "Got ${post?.photoFileName}")
+                if (post != null) {
+                    listener.onGetPost(post)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+    }
+
     override fun getAllPosts() {
         db.collection(POSTS_COLLECTION)
             .orderBy("photoFileName", Query.Direction.DESCENDING)
@@ -124,6 +139,38 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                     posts.add(post)
                 }
                 listener.onGetAllPostsForUser(posts)
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+    }
+
+    override fun getAllHashtags() {
+        db.collection(HASHTAGS_COLLECTION)
+            .get()
+            .addOnSuccessListener { result ->
+                val hashtags = arrayListOf<String>()
+                for (hashtag in result) {
+                    Log.d(TAG, "${hashtag.id} => ${hashtag.data}")
+                    hashtags.add(hashtag.id)
+                }
+                listener.onGetAllHashtags(hashtags)
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "Error getting documents: ", exception)
+            }
+    }
+
+    override fun getAllPostsFor(hashtag: String) {
+        db.collection(HASHTAGS_COLLECTION).document(hashtag)
+            .get()
+            .addOnSuccessListener { result ->
+                val posts = arrayListOf<Post>()
+
+                val hashtags = result.data?.keys?.toList()
+                if (hashtags != null) {
+                    listener.onGetAllPostsForHashtag(hashtags)
+                }
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "Error getting documents: ", exception)

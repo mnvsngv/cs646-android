@@ -14,7 +14,6 @@ import com.mnvsngv.assignment4.singleton.CurrentSession
 import kotlinx.android.synthetic.main.activity_new_post.*
 
 
-private const val TAG = "NewPost"
 private const val URI_KEY = "uriString"
 
 class NewPostActivity : AppCompatActivity(), IBackendListener {
@@ -44,7 +43,7 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
     override fun onUpdateUploadProgress(progress: Int) {
         ObjectAnimator.ofInt(uploadProgressBar, "progress", progress)
             .setDuration(750)
-            .start();
+            .start()
     }
 
     override fun onUploadSuccess() {

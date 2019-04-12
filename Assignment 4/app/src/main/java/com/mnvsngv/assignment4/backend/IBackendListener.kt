@@ -11,7 +11,10 @@ interface IBackendListener {
     fun onLogout() {}
     fun onUploadSuccess() {}
     fun onUpdateUploadProgress(progress: Int) {}
+    fun onGetPost(post: Post) {}
+    fun onGetAllUsers(users: List<User>) {}
     fun onGetAllPosts(posts: List<Post>) {}
     fun onGetAllPostsForUser(posts: List<Post>) {}
-    fun onGetAllUsers(users: List<User>) {}
+    fun onGetAllHashtags(hashtags: List<String>) {}
+    fun onGetAllPostsForHashtag(postIDs: List<String>) {}
 }
