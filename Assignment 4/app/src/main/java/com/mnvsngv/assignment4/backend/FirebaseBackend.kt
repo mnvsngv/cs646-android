@@ -91,6 +91,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                         listener.onUploadSuccess()
                     }
         }
+
     }
 
     override fun getPost(postID: String) {

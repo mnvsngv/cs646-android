@@ -13,6 +13,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
+import android.view.View
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.fragment.ListType
@@ -36,13 +37,14 @@ private const val REQUEST_IMAGE_CAPTURE = 1
 private const val PICK_IMAGE = 2
 private const val URI_KEY = "uriString"
 
-class InstaPostActivity : AppCompatActivity(), IBackendListener {
+class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
 
     private var backend = BackendInstance.getInstance(this, this)
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
+                progressBar.visibility = View.VISIBLE
                 takePhotoFab.show()
                 addFromGalleryFab.show()
                 val transaction = supportFragmentManager.beginTransaction()
@@ -51,6 +53,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
+                progressBar.visibility = View.VISIBLE
                 takePhotoFab.hide()
                 addFromGalleryFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
@@ -59,6 +62,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
+                progressBar.visibility = View.VISIBLE
                 takePhotoFab.hide()
                 addFromGalleryFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
@@ -119,6 +123,10 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
     override fun onLogout() {
         startActivity(intentFor<LoginActivity>().newTask().clearTop())
         finish()
+    }
+
+    override fun onFinishedLoading() {
+        progressBar.visibility = View.INVISIBLE
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

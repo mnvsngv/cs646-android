@@ -32,6 +32,7 @@ class MainFragment : Fragment(), IBackendListener,
 
     private lateinit var listType: ListType
     private lateinit var backend: IBackend
+    private lateinit var listener: OnFragmentInteractionListener
     private var user: User? = null
     private var hashtag: String? = null
     private val hashtagPosts = arrayListOf<Post>()
@@ -49,6 +50,7 @@ class MainFragment : Fragment(), IBackendListener,
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
+        listener = context as OnFragmentInteractionListener
         backend = BackendInstance.getInstance(context as Activity, this)
     }
 
@@ -97,6 +99,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = PostRecyclerViewAdapter(posts)
             }
         }
+        listener.onFinishedLoading()
     }
 
     override fun onGetAllPostsForUser(posts: List<Post>) {
@@ -105,6 +108,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = PostRecyclerViewAdapter(posts)
             }
         }
+        listener.onFinishedLoading()
     }
 
     override fun onGetAllUsers(users: List<User>) {
@@ -113,7 +117,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = UserRecyclerViewAdapter(users, this@MainFragment)
             }
         }
-
+        listener.onFinishedLoading()
     }
 
     override fun onGetAllHashtags(hashtags: List<String>) {
@@ -122,6 +126,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = HashtagRecyclerViewAdapter(hashtags, this@MainFragment)
             }
         }
+        listener.onFinishedLoading()
     }
 
     override fun onGetAllPostsForHashtag(postIDs: List<String>) {
@@ -148,6 +153,7 @@ class MainFragment : Fragment(), IBackendListener,
                 with(view as RecyclerView) {
 //                    adapter?.notifyDataSetChanged()
                     adapter = PostRecyclerViewAdapter(hashtagPosts)
+                    listener.onFinishedLoading()
                 }
             }
         }
@@ -159,6 +165,10 @@ class MainFragment : Fragment(), IBackendListener,
 
     override fun handleHashtagClicked(hashtag: String) {
         startActivity<HashtagPostsActivity>(ARG_HASHTAG to hashtag)
+    }
+
+    interface OnFragmentInteractionListener {
+        fun onFinishedLoading()
     }
 
     companion object {
