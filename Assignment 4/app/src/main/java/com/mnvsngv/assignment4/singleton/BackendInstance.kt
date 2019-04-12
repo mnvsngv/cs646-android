@@ -5,6 +5,7 @@ import com.mnvsngv.assignment4.backend.FirebaseBackend
 import com.mnvsngv.assignment4.backend.IBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
 
+// TODO fix having to recreate the backend instance for each activity
 object BackendInstance {
     private var backend: IBackend? = null
 
