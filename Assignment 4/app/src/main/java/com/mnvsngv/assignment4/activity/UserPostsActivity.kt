@@ -26,7 +26,7 @@ class UserPostsActivity : AppCompatActivity(), MainFragment.OnFragmentInteractio
         transaction.commit()
     }
 
-    override fun onFinishedLoading() {
+    override fun onFinishedLoading(hasPosts: Boolean) {
         progressBar.visibility = View.INVISIBLE
     }
 }

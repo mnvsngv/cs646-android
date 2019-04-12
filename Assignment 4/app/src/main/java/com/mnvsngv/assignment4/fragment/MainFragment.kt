@@ -99,7 +99,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = PostRecyclerViewAdapter(posts)
             }
         }
-        listener.onFinishedLoading()
+        listener.onFinishedLoading(posts.isNotEmpty())
     }
 
     override fun onGetAllPostsForUser(posts: List<Post>) {
@@ -108,7 +108,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = PostRecyclerViewAdapter(posts)
             }
         }
-        listener.onFinishedLoading()
+        listener.onFinishedLoading(posts.isNotEmpty())
     }
 
     override fun onGetAllUsers(users: List<User>) {
@@ -117,7 +117,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = UserRecyclerViewAdapter(users, this@MainFragment)
             }
         }
-        listener.onFinishedLoading()
+        listener.onFinishedLoading(users.isNotEmpty())
     }
 
     override fun onGetAllHashtags(hashtags: List<String>) {
@@ -126,16 +126,10 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = HashtagRecyclerViewAdapter(hashtags, this@MainFragment)
             }
         }
-        listener.onFinishedLoading()
+        listener.onFinishedLoading(hashtags.isNotEmpty())
     }
 
     override fun onGetAllPostsForHashtag(postIDs: List<String>) {
-//        if (view is RecyclerView) {
-//            with(view as RecyclerView) {
-//                Log.i(TAG, "Creating adapter")
-//                adapter = PostRecyclerViewAdapter(hashtagPosts)
-//            }
-//        }
         numberOfHashtagPosts = postIDs.size
         Log.i(TAG, "Need to get $numberOfHashtagPosts posts")
         for (postID in postIDs) {
@@ -148,12 +142,12 @@ class MainFragment : Fragment(), IBackendListener,
         Log.i(TAG, "Adding ${post.photoFileName}")
         hashtagPosts.add(post)
         if (hashtagPosts.size == numberOfHashtagPosts) {
-            Log.i(TAG, "Added all posts!")
+            hashtagPosts.sortBy { it.timestamp }
+
             if (view is RecyclerView) {
                 with(view as RecyclerView) {
-//                    adapter?.notifyDataSetChanged()
                     adapter = PostRecyclerViewAdapter(hashtagPosts)
-                    listener.onFinishedLoading()
+                    listener.onFinishedLoading(hashtagPosts.isNotEmpty())
                 }
             }
         }
@@ -168,7 +162,7 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     interface OnFragmentInteractionListener {
-        fun onFinishedLoading()
+        fun onFinishedLoading(hasPosts: Boolean)
     }
 
     companion object {

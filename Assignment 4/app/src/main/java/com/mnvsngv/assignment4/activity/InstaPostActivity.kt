@@ -29,10 +29,6 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-
-
-
-
 private const val REQUEST_IMAGE_CAPTURE = 1
 private const val PICK_IMAGE = 2
 private const val URI_KEY = "uriString"
@@ -40,39 +36,6 @@ private const val URI_KEY = "uriString"
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
 
     private var backend = BackendInstance.getInstance(this, this)
-
-    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        when (item.itemId) {
-            R.id.navigation_home -> {
-                progressBar.visibility = View.VISIBLE
-                takePhotoFab.show()
-                addFromGalleryFab.show()
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS))
-                transaction.commit()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_dashboard -> {
-                progressBar.visibility = View.VISIBLE
-                takePhotoFab.hide()
-                addFromGalleryFab.hide()
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.USERS))
-                transaction.commit()
-                return@OnNavigationItemSelectedListener true
-            }
-            R.id.navigation_notifications -> {
-                progressBar.visibility = View.VISIBLE
-                takePhotoFab.hide()
-                addFromGalleryFab.hide()
-                val transaction = supportFragmentManager.beginTransaction()
-                transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.HASHTAGS))
-                transaction.commit()
-                return@OnNavigationItemSelectedListener true
-            }
-        }
-        false
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -125,8 +88,13 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         finish()
     }
 
-    override fun onFinishedLoading() {
+    override fun onFinishedLoading(hasPosts: Boolean) {
         progressBar.visibility = View.INVISIBLE
+        if (hasPosts) {
+            noPostsText.visibility = View.INVISIBLE
+        } else {
+            noPostsText.visibility = View.VISIBLE
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -136,6 +104,38 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
                 PICK_IMAGE -> startActivity<NewPostActivity>(URI_KEY to data?.data)
             }
         }
+    }
+
+    private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
+        progressBar.visibility = View.VISIBLE
+        noPostsText.visibility = View.INVISIBLE
+        when (item.itemId) {
+            R.id.navigation_home -> {
+                takePhotoFab.show()
+                addFromGalleryFab.show()
+                replaceFragmentWith(ListType.POSTS)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_dashboard -> {
+                takePhotoFab.hide()
+                addFromGalleryFab.hide()
+                replaceFragmentWith(ListType.USERS)
+                return@OnNavigationItemSelectedListener true
+            }
+            R.id.navigation_notifications -> {
+                takePhotoFab.hide()
+                addFromGalleryFab.hide()
+                replaceFragmentWith(ListType.HASHTAGS)
+                return@OnNavigationItemSelectedListener true
+            }
+        }
+        false
+    }
+
+    private fun replaceFragmentWith(listType: ListType) {
+        val transaction = supportFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(listType))
+        transaction.commit()
     }
 
     private object AddPost {

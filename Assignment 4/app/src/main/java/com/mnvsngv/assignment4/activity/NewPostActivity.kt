@@ -29,11 +29,12 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
         submitPostButton.setOnClickListener {
             if (CurrentSession.user != null) {
                 uploadProgressBar.visibility = View.VISIBLE
+                submitPostButton.visibility = View.INVISIBLE
                 val id = (CurrentSession.user as User).userID
 
                 val fileName = photoUri.lastPathSegment
                 if (fileName != null) {
-                    val post = Post(id, fileName, captionInput.text.toString())
+                    val post = Post(id, fileName, captionInput.text.toString(), System.currentTimeMillis())
                     backend.uploadNewPost(post, photoUri, findHashtagsIn(post.caption))
                 }
             }

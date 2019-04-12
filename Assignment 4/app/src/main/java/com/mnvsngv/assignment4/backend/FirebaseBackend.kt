@@ -111,7 +111,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
 
     override fun getAllPosts() {
         db.collection(POSTS_COLLECTION)
-            .orderBy("photoFileName", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val posts = arrayListOf<Post>()
@@ -130,7 +130,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     override fun getAllPostsFor(user: User) {
         db.collection(POSTS_COLLECTION)
             .whereEqualTo("userID", user.userID)
-            .orderBy("photoFileName", Query.Direction.DESCENDING)
+            .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val posts = arrayListOf<Post>()
@@ -166,8 +166,6 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         db.collection(HASHTAGS_COLLECTION).document(hashtag)
             .get()
             .addOnSuccessListener { result ->
-                val posts = arrayListOf<Post>()
-
                 val hashtags = result.data?.keys?.toList()
                 if (hashtags != null) {
                     listener.onGetAllPostsForHashtag(hashtags)
@@ -207,12 +205,12 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .set(user)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot added with ID: $email")
+                listener.onRegisterSuccess()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
             }
 
-        listener.onRegisterSuccess()
     }
 
     private fun handleLoginException(exception: Exception?) {

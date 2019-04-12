@@ -31,4 +31,5 @@
     <string name="logout">Logout</string>
     <string name="submit_post">Done</string>
     <string name="caption_hint">What\'s this photo all about?</string>
+    <string name="no_posts">Nothing here, mate! Go make some posts!</string>
 </resources>

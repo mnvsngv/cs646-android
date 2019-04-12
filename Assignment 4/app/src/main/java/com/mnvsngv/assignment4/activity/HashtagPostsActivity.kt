@@ -24,7 +24,7 @@ class HashtagPostsActivity : AppCompatActivity(), MainFragment.OnFragmentInterac
         transaction.commit()
     }
 
-    override fun onFinishedLoading() {
+    override fun onFinishedLoading(hasPosts: Boolean) {
         progressBar.visibility = View.INVISIBLE
     }
 }
