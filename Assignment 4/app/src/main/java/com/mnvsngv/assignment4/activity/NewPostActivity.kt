@@ -63,7 +63,7 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
             while (index+length < caption.length && caption[index+length].isLetterOrDigit()) {
                 length++
             }
-            if (length != 0) hashtags.add(caption.substring(index, index + length))
+            if (length != 0) hashtags.add(caption.substring(index, index + length).toLowerCase())
 
             index = caption.indexOf('#', index)
         }
