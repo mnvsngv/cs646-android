@@ -15,8 +15,9 @@ import com.mnvsngv.assignment4.activity.LoginActivity
 import com.mnvsngv.assignment4.activity.UserPostsActivity
 import com.mnvsngv.assignment4.backend.IBackend
 import com.mnvsngv.assignment4.backend.IBackendListener
-import com.mnvsngv.assignment4.dataclass.Post
-import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.data.ListType
+import com.mnvsngv.assignment4.data.Post
+import com.mnvsngv.assignment4.data.User
 import com.mnvsngv.assignment4.singleton.BackendInstance
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.newTask
@@ -48,6 +49,8 @@ class MainFragment : Fragment(), IBackendListener,
             user = it.getSerializable(ARG_USER) as User?
             hashtag = it.getString(ARG_HASHTAG)
         }
+
+        backend = BackendInstance.getInstance(context as Activity, this)
     }
 
     override fun onAttach(context: Context?) {
@@ -65,8 +68,8 @@ class MainFragment : Fragment(), IBackendListener,
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
-                Log.i(TAG, "Currently the adapter is: ${adapter.toString()}")
                 adapter = when(listType) {
+
                     ListType.POSTS -> {
                         if (fragmentPosts.isEmpty()) {
                             when {
@@ -77,10 +80,12 @@ class MainFragment : Fragment(), IBackendListener,
                         }
                         PostRecyclerViewAdapter(fragmentPosts)
                     }
+
                     ListType.USERS -> {
                         if (fragmentUsers.isEmpty()) backend.getAllUsers()
                         UserRecyclerViewAdapter(fragmentUsers, this@MainFragment)
                     }
+
                     ListType.HASHTAGS -> {
                         if (fragmentHashtags.isEmpty()) backend.getAllHashtags()
                         HashtagRecyclerViewAdapter(fragmentHashtags, this@MainFragment)

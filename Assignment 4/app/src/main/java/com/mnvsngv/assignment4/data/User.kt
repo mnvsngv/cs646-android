@@ -1,4 +1,4 @@
-package com.mnvsngv.assignment4.dataclass
+package com.mnvsngv.assignment4.data
 
 import java.io.Serializable
 

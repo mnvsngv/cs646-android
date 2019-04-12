@@ -1,7 +1,7 @@
 package com.mnvsngv.assignment4.backend
 
-import com.mnvsngv.assignment4.dataclass.Post
-import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.data.Post
+import com.mnvsngv.assignment4.data.User
 
 interface IBackendListener {
     fun onLoginSuccess() {}

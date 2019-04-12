@@ -17,7 +17,7 @@ import android.view.MenuItem
 import android.view.View
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.IBackendListener
-import com.mnvsngv.assignment4.fragment.ListType
+import com.mnvsngv.assignment4.data.ListType
 import com.mnvsngv.assignment4.fragment.MainFragment
 import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_instapost.*
@@ -56,6 +56,8 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         addFromGalleryFab.setOnClickListener {
             AddPost.fromGallery(this)
         }
+
+        replaceFragmentWith(ListType.POSTS)
     }
 
     override fun onSaveInstanceState(outState: Bundle?) {
@@ -70,11 +72,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
 
     override fun onResume() {
         super.onResume()
-        backend = BackendInstance.getInstance(this, this)
-
-        // TODO prevent this from refreshing every time!
-//        onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
-//        navigation.selectedItemId = R.id.navigation_home
+//        backend = BackendInstance.getInstance(this, this)
     }
 
     // Add the logout button to the action bar

@@ -12,8 +12,8 @@ import com.google.firebase.firestore.SetOptions
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.UploadTask
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.dataclass.Post
-import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.data.Post
+import com.mnvsngv.assignment4.data.User
 
 
 private const val TAG = "FirebaseBackend"
@@ -59,6 +59,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
 
     override fun logout() {
         auth.signOut()
+        currentUser = null
         listener.onLogout()
     }
 

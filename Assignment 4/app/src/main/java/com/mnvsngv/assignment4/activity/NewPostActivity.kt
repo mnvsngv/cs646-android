@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity
 import android.view.View
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.backend.IBackendListener
-import com.mnvsngv.assignment4.dataclass.Post
+import com.mnvsngv.assignment4.data.Post
 import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_new_post.*
 
@@ -25,13 +25,14 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
         val photoUri = intent.getParcelableExtra<Uri>(URI_KEY)
         postImage.setImageURI(photoUri)
         submitPostButton.setOnClickListener {
-            if (backend.getCurrentUser() != null) {
+            val currentUser = backend.getCurrentUser()
+            if (currentUser != null) {
                 uploadProgressBar.visibility = View.VISIBLE
                 submitPostButton.visibility = View.INVISIBLE
-                val id = backend.getCurrentUser()?.userID
+                val id = currentUser.userID
 
                 val fileName = photoUri.lastPathSegment
-                if (fileName != null && id != null) {
+                if (fileName != null) {
                     val post = Post(id, fileName, captionInput.text.toString(), System.currentTimeMillis())
                     backend.uploadNewPost(post, photoUri, findHashtagsIn(post.caption))
                 }

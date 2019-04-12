@@ -6,7 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.data.User
 
 
 import kotlinx.android.synthetic.main.fragment_user.view.*

@@ -9,7 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.mnvsngv.assignment4.R
-import com.mnvsngv.assignment4.dataclass.Post
+import com.mnvsngv.assignment4.data.Post
 import kotlinx.android.synthetic.main.fragment_post.view.*
 
 

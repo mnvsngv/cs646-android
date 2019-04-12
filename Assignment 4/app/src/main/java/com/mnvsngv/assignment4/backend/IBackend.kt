@@ -1,8 +1,8 @@
 package com.mnvsngv.assignment4.backend
 
 import android.net.Uri
-import com.mnvsngv.assignment4.dataclass.Post
-import com.mnvsngv.assignment4.dataclass.User
+import com.mnvsngv.assignment4.data.Post
+import com.mnvsngv.assignment4.data.User
 
 interface IBackend {
     fun login(email: String, password: String)
