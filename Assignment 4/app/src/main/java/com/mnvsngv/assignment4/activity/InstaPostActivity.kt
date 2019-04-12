@@ -44,6 +44,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
         when (item.itemId) {
             R.id.navigation_home -> {
                 takePhotoFab.show()
+                addFromGalleryFab.show()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS))
                 transaction.commit()
@@ -51,6 +52,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
             }
             R.id.navigation_dashboard -> {
                 takePhotoFab.hide()
+                addFromGalleryFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.USERS))
                 transaction.commit()
@@ -58,6 +60,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
             }
             R.id.navigation_notifications -> {
                 takePhotoFab.hide()
+                addFromGalleryFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.HASHTAGS))
                 transaction.commit()
