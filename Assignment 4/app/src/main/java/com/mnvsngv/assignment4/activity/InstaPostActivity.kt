@@ -28,7 +28,12 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
+
+
+
+
 private const val REQUEST_IMAGE_CAPTURE = 1
+private const val PICK_IMAGE = 2
 private const val URI_KEY = "uriString"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener {
@@ -38,21 +43,21 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         when (item.itemId) {
             R.id.navigation_home -> {
-                addPostFab.show()
+                takePhotoFab.show()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS))
                 transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_dashboard -> {
-                addPostFab.hide()
+                takePhotoFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.USERS))
                 transaction.commit()
                 return@OnNavigationItemSelectedListener true
             }
             R.id.navigation_notifications -> {
-                addPostFab.hide()
+                takePhotoFab.hide()
                 val transaction = supportFragmentManager.beginTransaction()
                 transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.HASHTAGS))
                 transaction.commit()
@@ -64,14 +69,18 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_instapost)
+        setContentView(com.mnvsngv.assignment4.R.layout.activity_instapost)
 
         actionBar?.title = getString(R.string.app_name)
         supportActionBar?.title = getString(R.string.app_name)
         navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
 
-        addPostFab.setOnClickListener {
+        takePhotoFab.setOnClickListener {
             AddPost.captureImageForNewPost(this)
+        }
+
+        addFromGalleryFab.setOnClickListener {
+            AddPost.fromGallery(this)
         }
     }
 
@@ -80,7 +89,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
         backend = BackendInstance.getInstance(this, this)
 
         // TODO prevent this from refreshing every time!
-
         onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
         navigation.selectedItemId = R.id.navigation_home
     }
@@ -111,8 +119,11 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
-            startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                REQUEST_IMAGE_CAPTURE -> startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
+                PICK_IMAGE -> startActivity<NewPostActivity>(URI_KEY to data?.data)
+            }
         }
     }
 
@@ -159,6 +170,15 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener {
                 mediaScanIntent.data = Uri.fromFile(f)
                 activity.sendBroadcast(mediaScanIntent)
             }
+        }
+
+        fun fromGallery(activity: Activity) {
+
+
+            val intent = Intent()
+            intent.type = "image/*"
+            intent.action = Intent.ACTION_GET_CONTENT
+            activity.startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE)
         }
     }
 }

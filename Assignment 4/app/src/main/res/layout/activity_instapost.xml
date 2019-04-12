@@ -28,9 +28,16 @@
     <android.support.design.widget.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:clickable="true" app:srcCompat="@drawable/ic_add_white_24dp"
-            android:id="@+id/addPostFab"
+            android:clickable="true" app:srcCompat="@drawable/ic_take_photo_white_24dp"
+            android:id="@+id/takePhotoFab"
             app:layout_constraintRight_toRightOf="parent" app:layout_constraintBottom_toTopOf="@+id/navigation"
             android:layout_margin="@dimen/fab_padding" android:focusable="true"/>
+    <android.support.design.widget.FloatingActionButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:clickable="true" app:srcCompat="@drawable/ic_take_from_gallery_black_24dp"
+            android:id="@+id/addFromGalleryFab" app:backgroundTint="#FFF"
+            android:layout_margin="@dimen/fab_padding" app:layout_constraintBottom_toTopOf="@+id/takePhotoFab"
+            app:layout_constraintRight_toRightOf="parent" android:focusable="true"/>
 
 </android.support.constraint.ConstraintLayout>

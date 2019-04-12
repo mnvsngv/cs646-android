@@ -13,6 +13,9 @@ class HashtagPostsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_posts)
 
         val hashtag = intent.getSerializableExtra(MainFragment.ARG_HASHTAG) as String
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.title = "#$hashtag"
+        supportActionBar?.title = "#$hashtag"
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS, hashtag=hashtag))

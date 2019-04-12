@@ -15,6 +15,9 @@ class UserPostsActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user_posts)
 
         val user = intent.getSerializableExtra(ARG_USER) as User
+        actionBar?.setDisplayHomeAsUpEnabled(true)
+        actionBar?.title = "${user.userID}'s posts"
+        supportActionBar?.title = "${user.userID}'s posts"
 
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(ListType.POSTS, user=user))

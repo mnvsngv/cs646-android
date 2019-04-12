@@ -125,12 +125,12 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     override fun onGetAllPostsForHashtag(postIDs: List<String>) {
-        if (view is RecyclerView) {
-            with(view as RecyclerView) {
-                Log.i(TAG, "Creating adapter")
-                adapter = PostRecyclerViewAdapter(hashtagPosts)
-            }
-        }
+//        if (view is RecyclerView) {
+//            with(view as RecyclerView) {
+//                Log.i(TAG, "Creating adapter")
+//                adapter = PostRecyclerViewAdapter(hashtagPosts)
+//            }
+//        }
         numberOfHashtagPosts = postIDs.size
         Log.i(TAG, "Need to get $numberOfHashtagPosts posts")
         for (postID in postIDs) {
@@ -146,7 +146,8 @@ class MainFragment : Fragment(), IBackendListener,
             Log.i(TAG, "Added all posts!")
             if (view is RecyclerView) {
                 with(view as RecyclerView) {
-                    adapter?.notifyDataSetChanged()
+//                    adapter?.notifyDataSetChanged()
+                    adapter = PostRecyclerViewAdapter(hashtagPosts)
                 }
             }
         }
