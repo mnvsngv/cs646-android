@@ -18,14 +18,17 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme">
         <activity android:name=".activity.HashtagPostsActivity"
-                  android:parentActivityName=".activity.InstaPostActivity">
+                  android:parentActivityName=".activity.InstaPostActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity android:name=".activity.UserPostsActivity"
-                  android:parentActivityName=".activity.InstaPostActivity">
+                  android:parentActivityName=".activity.InstaPostActivity"
+                  android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".activity.NewPostActivity"
-                android:windowSoftInputMode="adjustPan">
+                android:windowSoftInputMode="adjustPan"
+                android:screenOrientation="portrait">
         </activity>
 
         <provider
@@ -40,12 +43,14 @@
 
         <activity
                 android:name=".activity.InstaPostActivity"
-                android:label="@string/title_activity_instapost">
+                android:label="@string/title_activity_instapost"
+                android:screenOrientation="portrait">
         </activity>
         <activity
                 android:name=".activity.RegisterActivity"
                 android:parentActivityName=".activity.LoginActivity"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize"
+                android:screenOrientation="portrait">
 
             <!-- Parent activity meta-data to support 4.0 and lower -->
             <meta-data
@@ -54,7 +59,8 @@
         </activity>
         <activity
                 android:name=".activity.LoginActivity"
-                android:windowSoftInputMode="adjustResize">
+                android:windowSoftInputMode="adjustResize"
+                android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 

@@ -14,7 +14,6 @@ import com.google.firebase.storage.UploadTask
 import com.mnvsngv.assignment4.R
 import com.mnvsngv.assignment4.dataclass.Post
 import com.mnvsngv.assignment4.dataclass.User
-import com.mnvsngv.assignment4.singleton.CurrentSession
 
 
 private const val TAG = "FirebaseBackend"
@@ -27,6 +26,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
+    private var currentUser: User? = null
 
     override fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
@@ -53,8 +53,8 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             }
     }
 
-    override fun isUserLoggedIn(): Boolean {
-        return auth.currentUser != null
+    override fun getCurrentUser(): User? {
+        return currentUser
     }
 
     override fun logout() {
@@ -110,6 +110,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     }
 
     override fun getAllPosts() {
+        Log.i(TAG, "Getting all posts...")
         db.collection(POSTS_COLLECTION)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
@@ -177,6 +178,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     }
 
     override fun getAllUsers() {
+        Log.i(TAG, "Getting all users...")
         db.collection(USERS_COLLECTION)
             .get()
             .addOnSuccessListener { result ->
@@ -203,7 +205,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         // Add a new document with a generated ID
         db.collection(USERS_COLLECTION).document(email)
             .set(user)
-            .addOnSuccessListener { documentReference ->
+            .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot added with ID: $email")
                 listener.onRegisterSuccess()
             }
@@ -249,7 +251,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
-                    CurrentSession.user = document.toObject(User::class.java)
+                    currentUser = document.toObject(User::class.java)
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                 } else {
                     Log.d(TAG, "No such document")

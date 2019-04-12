@@ -8,7 +8,7 @@ interface IBackend {
     fun login(email: String, password: String)
     fun register(email: String, userID: String, name: String, password: String)
     fun logout()
-    fun isUserLoggedIn(): Boolean
+    fun getCurrentUser(): User?
     fun uploadNewPost(post: Post, photoUri: Uri, hashtags: List<String>)
     fun getPost(postID: String)
     fun getAllUsers()

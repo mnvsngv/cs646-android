@@ -35,7 +35,9 @@ class MainFragment : Fragment(), IBackendListener,
     private lateinit var listener: OnFragmentInteractionListener
     private var user: User? = null
     private var hashtag: String? = null
-    private val hashtagPosts = arrayListOf<Post>()
+    private var fragmentPosts = mutableListOf<Post>()
+    private var fragmentUsers = mutableListOf<User>()
+    private var fragmentHashtags = mutableListOf<String>()
     private var numberOfHashtagPosts = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -63,24 +65,25 @@ class MainFragment : Fragment(), IBackendListener,
         // Set the adapter
         if (view is RecyclerView) {
             with(view) {
+                Log.i(TAG, "Currently the adapter is: ${adapter.toString()}")
                 adapter = when(listType) {
                     ListType.POSTS -> {
-                        if (user != null) {
-                            backend.getAllPostsFor(user as User)
-                        } else if(hashtag != null) {
-                            backend.getAllPostsFor(hashtag as String)
-                        } else {
-                            backend.getAllPosts()
+                        if (fragmentPosts.isEmpty()) {
+                            when {
+                                user != null -> backend.getAllPostsFor(user as User)
+                                hashtag != null -> backend.getAllPostsFor(hashtag as String)
+                                else -> backend.getAllPosts()
+                            }
                         }
-                        PostRecyclerViewAdapter(emptyList())
+                        PostRecyclerViewAdapter(fragmentPosts)
                     }
                     ListType.USERS -> {
-                        backend.getAllUsers()
-                        UserRecyclerViewAdapter(emptyList(), this@MainFragment)
+                        if (fragmentUsers.isEmpty()) backend.getAllUsers()
+                        UserRecyclerViewAdapter(fragmentUsers, this@MainFragment)
                     }
                     ListType.HASHTAGS -> {
-                        backend.getAllHashtags()
-                        HashtagRecyclerViewAdapter(emptyList(), this@MainFragment)
+                        if (fragmentHashtags.isEmpty()) backend.getAllHashtags()
+                        HashtagRecyclerViewAdapter(fragmentHashtags, this@MainFragment)
                     }
                 }
             }
@@ -94,44 +97,53 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     override fun onGetAllPosts(posts: List<Post>) {
+        fragmentPosts.removeAll { true }
+        fragmentPosts.addAll(posts)
         if (view is RecyclerView) {
             with(view as RecyclerView) {
-                adapter = PostRecyclerViewAdapter(posts)
+                adapter?.notifyDataSetChanged()
             }
         }
         listener.onFinishedLoading(posts.isNotEmpty())
     }
 
     override fun onGetAllPostsForUser(posts: List<Post>) {
+        fragmentPosts.removeAll { true }
+        fragmentPosts.addAll(posts)
         if (view is RecyclerView) {
             with(view as RecyclerView) {
-                adapter = PostRecyclerViewAdapter(posts)
+                adapter?.notifyDataSetChanged()
             }
         }
         listener.onFinishedLoading(posts.isNotEmpty())
     }
 
     override fun onGetAllUsers(users: List<User>) {
+        fragmentUsers.removeAll { true }
+        fragmentUsers.addAll(users)
         if (view is RecyclerView) {
             with(view as RecyclerView) {
-                adapter = UserRecyclerViewAdapter(users, this@MainFragment)
+                adapter?.notifyDataSetChanged()
             }
         }
         listener.onFinishedLoading(users.isNotEmpty())
     }
 
     override fun onGetAllHashtags(hashtags: List<String>) {
+        fragmentHashtags.removeAll { true }
+        fragmentHashtags.addAll(hashtags)
         if (view is RecyclerView) {
             with(view as RecyclerView) {
-                adapter = HashtagRecyclerViewAdapter(hashtags, this@MainFragment)
+                adapter?.notifyDataSetChanged()
             }
         }
         listener.onFinishedLoading(hashtags.isNotEmpty())
     }
 
     override fun onGetAllPostsForHashtag(postIDs: List<String>) {
+        fragmentPosts.removeAll { true }
         numberOfHashtagPosts = postIDs.size
-        Log.i(TAG, "Need to get $numberOfHashtagPosts posts")
+        Log.i(TAG, "Need to get $numberOfHashtagPosts fragmentPosts")
         for (postID in postIDs) {
             Log.i(TAG, "Getting $postID...")
             backend.getPost(postID)
@@ -139,15 +151,14 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     override fun onGetPost(post: Post) {
-        Log.i(TAG, "Adding ${post.photoFileName}")
-        hashtagPosts.add(post)
-        if (hashtagPosts.size == numberOfHashtagPosts) {
-            hashtagPosts.sortBy { it.timestamp }
+        fragmentPosts.add(post)
+        if (fragmentPosts.size == numberOfHashtagPosts) {
+            fragmentPosts.sortBy { it.timestamp }
 
             if (view is RecyclerView) {
                 with(view as RecyclerView) {
-                    adapter = PostRecyclerViewAdapter(hashtagPosts)
-                    listener.onFinishedLoading(hashtagPosts.isNotEmpty())
+                    adapter?.notifyDataSetChanged()
+                    listener.onFinishedLoading(fragmentPosts.isNotEmpty())
                 }
             }
         }

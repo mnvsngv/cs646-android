@@ -10,6 +10,7 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
+import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -32,9 +33,12 @@ import java.util.*
 private const val REQUEST_IMAGE_CAPTURE = 1
 private const val PICK_IMAGE = 2
 private const val URI_KEY = "uriString"
+private const val TAG = "instapost"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
 
+    private val selectedItemKey = "selected-item"
+    private val fragmentCache = mutableMapOf<ListType, MainFragment>()
     private var backend = BackendInstance.getInstance(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,13 +58,23 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         }
     }
 
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt(selectedItemKey, navigation.selectedItemId)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.getInt(selectedItemKey)?.let { navigation.selectedItemId = it }
+    }
+
     override fun onResume() {
         super.onResume()
         backend = BackendInstance.getInstance(this, this)
 
         // TODO prevent this from refreshing every time!
-        onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
-        navigation.selectedItemId = R.id.navigation_home
+//        onNavigationItemSelectedListener.onNavigationItemSelected(navigation.menu.findItem(R.id.navigation_home))
+//        navigation.selectedItemId = R.id.navigation_home
     }
 
     // Add the logout button to the action bar
@@ -107,7 +121,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     }
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
-        progressBar.visibility = View.VISIBLE
         noPostsText.visibility = View.INVISIBLE
         when (item.itemId) {
             R.id.navigation_home -> {
@@ -133,8 +146,15 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     }
 
     private fun replaceFragmentWith(listType: ListType) {
+        val fragment = fragmentCache.getOrElse(listType) {
+            Log.i(TAG, "$listType not cached!")
+            progressBar.visibility = View.VISIBLE
+            val fragment = MainFragment.newInstance(listType)
+            fragmentCache[listType] = fragment
+            fragment
+        }
         val transaction = supportFragmentManager.beginTransaction()
-        transaction.replace(R.id.fragmentContainer, MainFragment.newInstance(listType))
+        transaction.replace(R.id.fragmentContainer, fragment)
         transaction.commit()
     }
 
