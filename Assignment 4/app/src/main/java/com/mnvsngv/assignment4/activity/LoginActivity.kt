@@ -18,6 +18,7 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.startActivity
 
+private const val TAG = "LoginActivity"
 
 class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
     private var backend = BackendInstance.getInstance(this, this)
@@ -25,6 +26,8 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        if (backend.isUserLoggedIn()) onLoginSuccess()
 
         loginButton.setOnClickListener {
             if (areInputsValid()) {
@@ -81,7 +84,6 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
 
     override fun onLoginSuccess() {
         progressBar.visibility = View.INVISIBLE
-        Toast.makeText(this, R.string.login_success, Toast.LENGTH_SHORT).show()
         startActivity(intentFor<InstaPostActivity>().newTask().clearTop())
         finish()
     }

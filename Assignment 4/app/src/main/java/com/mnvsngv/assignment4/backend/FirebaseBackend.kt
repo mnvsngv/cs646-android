@@ -54,7 +54,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     }
 
     override fun isUserLoggedIn(): Boolean {
-        return auth.currentUser == null
+        return auth.currentUser != null
     }
 
     override fun logout() {
