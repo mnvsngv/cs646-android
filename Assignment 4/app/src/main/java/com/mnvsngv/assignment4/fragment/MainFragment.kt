@@ -4,6 +4,8 @@ import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.res.ResourcesCompat
+import android.support.v4.widget.SwipeRefreshLayout
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.LayoutInflater
@@ -19,6 +21,7 @@ import com.mnvsngv.assignment4.data.ListType
 import com.mnvsngv.assignment4.data.Post
 import com.mnvsngv.assignment4.data.User
 import com.mnvsngv.assignment4.singleton.BackendInstance
+import kotlinx.android.synthetic.main.fragment_list_container.view.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.support.v4.intentFor
@@ -41,6 +44,7 @@ class MainFragment : Fragment(), IBackendListener,
     private var fragmentUsers = mutableListOf<User>()
     private var fragmentHashtags = mutableListOf<String>()
     private var numberOfHashtagPosts = 0
+    private lateinit var swipeContainer: SwipeRefreshLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,18 +70,29 @@ class MainFragment : Fragment(), IBackendListener,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_list_container, container, false)
+        swipeContainer = view as SwipeRefreshLayout
+        swipeContainer.setColorSchemeColors(ResourcesCompat.getColor(resources, R.color.colorPrimary, null))
 
         // Set the adapter
-        if (view is RecyclerView) {
-            with(view) {
+        if (view.list is RecyclerView) {
+            with(view.list) {
                 adapter = when(listType) {
 
                     ListType.POSTS -> {
                         if (fragmentPosts.isEmpty() || invalidateCache) {
                             when {
-                                user != null -> backend.getAllPostsFor(user as User)
-                                hashtag != null -> backend.getAllPostsFor(hashtag as String)
-                                else -> backend.getAllPosts()
+                                user != null -> {
+                                    swipeContainer.setOnRefreshListener { refreshPostsFor(user as User) }
+                                    backend.getAllPostsFor(user as User)
+                                }
+                                hashtag != null -> {
+                                    swipeContainer.setOnRefreshListener { refreshPostsFor(hashtag as String) }
+                                    backend.getAllPostsFor(hashtag as String)
+                                }
+                                else -> {
+                                    swipeContainer.setOnRefreshListener { refreshPosts() }
+                                    backend.getAllPosts()
+                                }
                             }
                         }
                         PostRecyclerViewAdapter(fragmentPosts)
@@ -85,11 +100,13 @@ class MainFragment : Fragment(), IBackendListener,
 
                     ListType.USERS -> {
                         if (fragmentUsers.isEmpty() || invalidateCache) backend.getAllUsers()
+                        swipeContainer.setOnRefreshListener { refreshUsers() }
                         UserRecyclerViewAdapter(fragmentUsers, this@MainFragment)
                     }
 
                     ListType.HASHTAGS -> {
                         if (fragmentHashtags.isEmpty() || invalidateCache) backend.getAllHashtags()
+                        swipeContainer.setOnRefreshListener { refreshHashtags() }
                         HashtagRecyclerViewAdapter(fragmentHashtags, this@MainFragment)
                     }
                 }
@@ -104,47 +121,19 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     override fun onGetAllPosts(posts: List<Post>) {
-        fragmentPosts.removeAll { true }
-        fragmentPosts.addAll(posts)
-        if (view is RecyclerView) {
-            with(view as RecyclerView) {
-                adapter?.notifyDataSetChanged()
-            }
-        }
-        listener.onFinishedLoading(posts.isNotEmpty())
+        refreshList(fragmentPosts, posts)
     }
 
     override fun onGetAllPostsForUser(posts: List<Post>) {
-        fragmentPosts.removeAll { true }
-        fragmentPosts.addAll(posts)
-        if (view is RecyclerView) {
-            with(view as RecyclerView) {
-                adapter?.notifyDataSetChanged()
-            }
-        }
-        listener.onFinishedLoading(posts.isNotEmpty())
+        refreshList(fragmentPosts, posts)
     }
 
     override fun onGetAllUsers(users: List<User>) {
-        fragmentUsers.removeAll { true }
-        fragmentUsers.addAll(users)
-        if (view is RecyclerView) {
-            with(view as RecyclerView) {
-                adapter?.notifyDataSetChanged()
-            }
-        }
-        listener.onFinishedLoading(users.isNotEmpty())
+        refreshList(fragmentUsers, users)
     }
 
     override fun onGetAllHashtags(hashtags: List<String>) {
-        fragmentHashtags.removeAll { true }
-        fragmentHashtags.addAll(hashtags)
-        if (view is RecyclerView) {
-            with(view as RecyclerView) {
-                adapter?.notifyDataSetChanged()
-            }
-        }
-        listener.onFinishedLoading(hashtags.isNotEmpty())
+        refreshList(fragmentHashtags, hashtags)
     }
 
     override fun onGetAllPostsForHashtag(postIDs: List<String>) {
@@ -162,9 +151,10 @@ class MainFragment : Fragment(), IBackendListener,
         if (fragmentPosts.size == numberOfHashtagPosts) {
             fragmentPosts.sortBy { it.timestamp }
 
-            if (view is RecyclerView) {
-                with(view as RecyclerView) {
+            if (view?.list is RecyclerView) {
+                with(view?.list as RecyclerView) {
                     adapter?.notifyDataSetChanged()
+                    swipeContainer.isRefreshing = false
                     listener.onFinishedLoading(fragmentPosts.isNotEmpty())
                 }
             }
@@ -179,9 +169,41 @@ class MainFragment : Fragment(), IBackendListener,
         startActivity<HashtagPostsActivity>(ARG_HASHTAG to hashtag)
     }
 
+    fun refreshPostsFor(user: User) {
+        backend = BackendInstance.getInstance(context as Activity, this)
+        backend.getAllPostsFor(user)
+    }
+
+    fun refreshPostsFor(hashtag: String) {
+        backend = BackendInstance.getInstance(context as Activity, this)
+        backend.getAllPostsFor(hashtag)
+    }
+
     fun refreshPosts() {
         backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllPosts()
+    }
+
+    fun refreshHashtags() {
+        backend = BackendInstance.getInstance(context as Activity, this)
+        backend.getAllHashtags()
+    }
+
+    fun refreshUsers() {
+        backend = BackendInstance.getInstance(context as Activity, this)
+        backend.getAllUsers()
+    }
+
+    private fun <T> refreshList(listToUpdate: MutableList<T>, newDataList: List<T>) {
+        listToUpdate.removeAll { true }
+        listToUpdate.addAll(newDataList)
+        if (view?.list is RecyclerView) {
+            with(view?.list as RecyclerView) {
+                adapter?.notifyDataSetChanged()
+            }
+        }
+        swipeContainer.isRefreshing = false
+        listener.onFinishedLoading(newDataList.isNotEmpty())
     }
 
     interface OnFragmentInteractionListener {
