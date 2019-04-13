@@ -10,7 +10,6 @@ import android.provider.MediaStore
 import android.support.design.widget.BottomNavigationView
 import android.support.v4.content.FileProvider
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import android.view.Menu
 import android.view.MenuInflater
 import android.view.MenuItem
@@ -144,7 +143,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     private fun replaceFragmentWith(listType: ListType) {
         currentListType = listType
         val fragment = fragmentCache.getOrElse(listType) {
-            Log.i(TAG, "$listType not cached!")
             progressBar.visibility = View.VISIBLE
             val fragment = MainFragment.newInstance(listType, invalidateCache = true)
             fragmentCache[listType] = fragment

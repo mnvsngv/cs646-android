@@ -2,7 +2,6 @@ package com.mnvsngv.assignment4.backend
 
 import android.app.Activity
 import android.net.Uri
-import android.util.Log
 import com.google.android.gms.tasks.Continuation
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.*
@@ -46,7 +45,6 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                     registerAndCreateUser(email, userID, name)
                     listener.onRegisterSuccess()
                 } else {
-                    Log.w(TAG, it.exception)
                     handleRegisterException(it.exception)
                 }
             }
@@ -99,32 +97,23 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .get()
             .addOnSuccessListener { result ->
                 val post = result.toObject(Post::class.java)
-                Log.i(TAG, "Got ${post?.photoFileName}")
                 if (post != null) {
                     listener.onGetPost(post)
                 }
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
-            }
     }
 
     override fun getAllPosts() {
-        Log.i(TAG, "Getting all posts...")
         db.collection(POSTS_COLLECTION)
             .orderBy("timestamp", Query.Direction.DESCENDING)
             .get()
             .addOnSuccessListener { result ->
                 val posts = arrayListOf<Post>()
                 for (document in result) {
-                    Log.d(TAG, "${document.id} => ${document.data}")
                     val post = document.toObject(Post::class.java)
                     posts.add(post)
                 }
                 listener.onGetAllPosts(posts)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
             }
     }
 
@@ -136,14 +125,10 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .addOnSuccessListener { result ->
                 val posts = arrayListOf<Post>()
                 for (document in result) {
-                    Log.d(TAG, "${document.id} => ${document.data}")
                     val post = document.toObject(Post::class.java)
                     posts.add(post)
                 }
                 listener.onGetAllPostsForUser(posts)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
             }
     }
 
@@ -153,13 +138,9 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .addOnSuccessListener { result ->
                 val hashtags = arrayListOf<String>()
                 for (hashtag in result) {
-                    Log.d(TAG, "${hashtag.id} => ${hashtag.data}")
                     hashtags.add(hashtag.id)
                 }
                 listener.onGetAllHashtags(hashtags)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
             }
     }
 
@@ -172,26 +153,18 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                     listener.onGetAllPostsForHashtag(hashtags)
                 }
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
-            }
     }
 
     override fun getAllUsers() {
-        Log.i(TAG, "Getting all users...")
         db.collection(USERS_COLLECTION)
             .get()
             .addOnSuccessListener { result ->
                 val users = arrayListOf<User>()
                 for (document in result) {
-                    Log.d(TAG, "${document.id} => ${document.data}")
                     val user = document.toObject(User::class.java)
                     users.add(user)
                 }
                 listener.onGetAllUsers(users)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "Error getting documents: ", exception)
             }
     }
 
@@ -206,11 +179,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
         db.collection(USERS_COLLECTION).document(email)
             .set(user)
             .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot added with ID: $email")
                 listener.onRegisterSuccess()
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
             }
 
     }
@@ -252,13 +221,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .addOnSuccessListener { document ->
                 if (document != null) {
                     currentUser = document.toObject(User::class.java)
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                } else {
-                    Log.d(TAG, "No such document")
                 }
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "get failed with ", exception)
             }
     }
 
