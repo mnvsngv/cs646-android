@@ -16,6 +16,7 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import com.mnvsngv.assignment4.R
+import com.mnvsngv.assignment4.activity.NewPostActivity.Companion.URI_KEY
 import com.mnvsngv.assignment4.backend.IBackendListener
 import com.mnvsngv.assignment4.data.ListType
 import com.mnvsngv.assignment4.fragment.MainFragment
@@ -30,9 +31,8 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-private const val REQUEST_IMAGE_CAPTURE = 1
+private const val CAPTURE_IMAGE = 1
 private const val PICK_IMAGE = 2
-private const val URI_KEY = "uriString"
 private const val TAG = "instapost"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
@@ -68,11 +68,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
         super.onRestoreInstanceState(savedInstanceState)
         savedInstanceState?.getInt(selectedItemKey)?.let { navigation.selectedItemId = it }
-    }
-
-    override fun onResume() {
-        super.onResume()
-//        backend = BackendInstance.getInstance(this, this)
     }
 
     // Add the logout button to the action bar
@@ -112,7 +107,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                REQUEST_IMAGE_CAPTURE -> startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
+                CAPTURE_IMAGE -> startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
                 PICK_IMAGE -> startActivity<NewPostActivity>(URI_KEY to data?.data)
             }
         }
@@ -164,19 +159,16 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
             Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
                 takePictureIntent.resolveActivity(activity.packageManager)?.also {
 
-                    val photoFile: File = AddPost.createImageFile(activity)
-
                     val photoURI: Uri = FileProvider.getUriForFile(
                         activity,
                         "com.mnvsngv.assignment4.fileprovider",
-                        photoFile
+                        AddPost.createImageFile(activity)
                     )
 
                     this.photoURI = photoURI
-                    addPictureToGallery(activity)
 
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                    activity.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                    activity.startActivityForResult(takePictureIntent, CAPTURE_IMAGE)
                 }
             }
 
@@ -193,17 +185,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
             )
         }
 
-        private fun addPictureToGallery(activity: Activity) {
-            Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE).also { mediaScanIntent ->
-                val f = File(this.photoURI.path)
-                mediaScanIntent.data = Uri.fromFile(f)
-                activity.sendBroadcast(mediaScanIntent)
-            }
-        }
-
         fun fromGallery(activity: Activity) {
-
-
             val intent = Intent()
             intent.type = "image/*"
             intent.action = Intent.ACTION_GET_CONTENT

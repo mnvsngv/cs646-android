@@ -12,17 +12,16 @@ import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_new_post.*
 
 
-private const val URI_KEY = "uriString"
-
 class NewPostActivity : AppCompatActivity(), IBackendListener {
 
     private val backend = BackendInstance.getInstance(this, this)
+    private lateinit var photoUri: Uri
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_post)
 
-        val photoUri = intent.getParcelableExtra<Uri>(URI_KEY)
+        photoUri = intent.getParcelableExtra(URI_KEY)
         postImage.setImageURI(photoUri)
         submitPostButton.setOnClickListener {
             val currentUser = backend.getCurrentUser()
@@ -48,6 +47,7 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
 
     override fun onUploadSuccess() {
         uploadProgressBar.visibility = View.INVISIBLE
+        contentResolver.delete(photoUri, null, null)
         finish()
     }
 
@@ -68,5 +68,9 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
         }
 
         return hashtags
+    }
+
+    companion object {
+        const val URI_KEY = "uri-string"
     }
 }
