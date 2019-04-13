@@ -79,7 +79,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = when(listType) {
 
                     ListType.POSTS -> {
-                        if (fragmentPosts.isEmpty() || invalidateCache) {
+                        if (fragmentPosts.isEmpty()) {
                             when {
                                 user != null -> {
                                     swipeContainer.setOnRefreshListener { refreshPostsFor(user as User) }
@@ -94,18 +94,20 @@ class MainFragment : Fragment(), IBackendListener,
                                     backend.getAllPosts()
                                 }
                             }
+                        } else {
+                            swipeContainer.setOnRefreshListener { refreshPosts() }
                         }
                         PostRecyclerViewAdapter(fragmentPosts)
                     }
 
                     ListType.USERS -> {
-                        if (fragmentUsers.isEmpty() || invalidateCache) backend.getAllUsers()
+                        if (fragmentUsers.isEmpty()) backend.getAllUsers()
                         swipeContainer.setOnRefreshListener { refreshUsers() }
                         UserRecyclerViewAdapter(fragmentUsers, this@MainFragment)
                     }
 
                     ListType.HASHTAGS -> {
-                        if (fragmentHashtags.isEmpty() || invalidateCache) backend.getAllHashtags()
+                        if (fragmentHashtags.isEmpty()) backend.getAllHashtags()
                         swipeContainer.setOnRefreshListener { refreshHashtags() }
                         HashtagRecyclerViewAdapter(fragmentHashtags, this@MainFragment)
                     }

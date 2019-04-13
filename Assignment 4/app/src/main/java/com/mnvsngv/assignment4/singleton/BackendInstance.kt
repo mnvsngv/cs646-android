@@ -12,12 +12,12 @@ object BackendInstance {
 
     fun getInstance(baseActivity: Activity, listener: IBackendListener): IBackend {
         Log.i("BackendInstance", "Using listener $listener")
-        if (backend == null) {
+//        if (backend == null) {
             backend = FirebaseBackend(baseActivity, listener)
-        }
-        else {
-            (backend as FirebaseBackend).listener = listener
-        }
+//        }
+//        else {
+//            (backend as FirebaseBackend).listener = listener
+//        }
         return backend as IBackend
     }
 }

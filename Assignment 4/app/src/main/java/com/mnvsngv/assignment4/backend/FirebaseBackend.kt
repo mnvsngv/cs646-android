@@ -26,7 +26,6 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
-    private var currentUser: User? = null
 
     override fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
@@ -261,6 +260,10 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             .addOnFailureListener { exception ->
                 Log.d(TAG, "get failed with ", exception)
             }
+    }
+
+    private companion object {
+        private var currentUser: User? = null
     }
 
 }

@@ -141,18 +141,14 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         false
     }
 
-    private fun replaceFragmentWith(listType: ListType, invalidateCache: Boolean = false) {
+    private fun replaceFragmentWith(listType: ListType) {
         currentListType = listType
-        val fragment = if (invalidateCache) {
-            MainFragment.newInstance(listType)
-        } else {
-            fragmentCache.getOrElse(listType) {
-                Log.i(TAG, "$listType not cached!")
-                progressBar.visibility = View.VISIBLE
-                val fragment = MainFragment.newInstance(listType)
-                fragmentCache[listType] = fragment
-                fragment
-            }
+        val fragment = fragmentCache.getOrElse(listType) {
+            Log.i(TAG, "$listType not cached!")
+            progressBar.visibility = View.VISIBLE
+            val fragment = MainFragment.newInstance(listType, invalidateCache = true)
+            fragmentCache[listType] = fragment
+            fragment
         }
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
