@@ -5,7 +5,7 @@
     <string name="password_input">Password:</string>
     <string name="email_hint">Email ID…</string>
     <string name="login_button_text">Login</string>
-    <string name="register_button_text">Create Account</string>
+    <string name="register_button_text">Register</string>
     <string name="instapost_text">InstaPost</string>
     <string name="login_failure">Unable to log in! Please try again?</string>
     <string name="login_success">Welcome back!</string>
@@ -32,4 +32,5 @@
     <string name="submit_post">Done</string>
     <string name="caption_hint">What\'s this photo all about?</string>
     <string name="no_posts">Nothing here, mate! Go make some posts!</string>
+    <string name="create_account_button">Create Account</string>
 </resources>
