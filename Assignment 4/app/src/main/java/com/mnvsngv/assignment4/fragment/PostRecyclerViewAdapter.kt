@@ -18,16 +18,6 @@ private const val TAG = "PostAdapter"
 class PostRecyclerViewAdapter(private val posts: List<Post>) :
         RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>() {
 
-    private val mOnClickListener: View.OnClickListener
-
-    init {
-        mOnClickListener = View.OnClickListener { v ->
-            val item = v.tag as Post
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-        }
-    }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.fragment_post, parent, false)
@@ -38,11 +28,12 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
         val post = posts[position]
         holder.userIDView.text = post.userID
         holder.captionView.text = post.caption
-        Glide.with(holder.view).load(post.uriString).into(holder.photoView);
+
+        // TODO Replace with AsyncTask
+        Glide.with(holder.view).load(post.uriString).into(holder.photoView)
 
         with(holder.view) {
             tag = post
-            setOnClickListener(mOnClickListener)
         }
     }
 

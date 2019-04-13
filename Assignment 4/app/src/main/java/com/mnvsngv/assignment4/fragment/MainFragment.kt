@@ -34,6 +34,7 @@ class MainFragment : Fragment(), IBackendListener,
     private lateinit var listType: ListType
     private lateinit var backend: IBackend
     private lateinit var listener: OnFragmentInteractionListener
+    private var invalidateCache = false
     private var user: User? = null
     private var hashtag: String? = null
     private var fragmentPosts = mutableListOf<Post>()
@@ -46,6 +47,7 @@ class MainFragment : Fragment(), IBackendListener,
 
         arguments?.let {
             listType = it.getSerializable(ARG_ADAPTER_TYPE) as ListType
+            invalidateCache = it.getBoolean(ARG_INVALIDATE_CACHE)
             user = it.getSerializable(ARG_USER) as User?
             hashtag = it.getString(ARG_HASHTAG)
         }
@@ -71,7 +73,7 @@ class MainFragment : Fragment(), IBackendListener,
                 adapter = when(listType) {
 
                     ListType.POSTS -> {
-                        if (fragmentPosts.isEmpty()) {
+                        if (fragmentPosts.isEmpty() || invalidateCache) {
                             when {
                                 user != null -> backend.getAllPostsFor(user as User)
                                 hashtag != null -> backend.getAllPostsFor(hashtag as String)
@@ -82,12 +84,12 @@ class MainFragment : Fragment(), IBackendListener,
                     }
 
                     ListType.USERS -> {
-                        if (fragmentUsers.isEmpty()) backend.getAllUsers()
+                        if (fragmentUsers.isEmpty() || invalidateCache) backend.getAllUsers()
                         UserRecyclerViewAdapter(fragmentUsers, this@MainFragment)
                     }
 
                     ListType.HASHTAGS -> {
-                        if (fragmentHashtags.isEmpty()) backend.getAllHashtags()
+                        if (fragmentHashtags.isEmpty() || invalidateCache) backend.getAllHashtags()
                         HashtagRecyclerViewAdapter(fragmentHashtags, this@MainFragment)
                     }
                 }
@@ -177,6 +179,11 @@ class MainFragment : Fragment(), IBackendListener,
         startActivity<HashtagPostsActivity>(ARG_HASHTAG to hashtag)
     }
 
+    fun refreshPosts() {
+        backend = BackendInstance.getInstance(context as Activity, this)
+        backend.getAllPosts()
+    }
+
     interface OnFragmentInteractionListener {
         fun onFinishedLoading(hasPosts: Boolean)
     }
@@ -186,12 +193,15 @@ class MainFragment : Fragment(), IBackendListener,
         const val ARG_ADAPTER_TYPE = "adapter-type"
         const val ARG_USER = "user"
         const val ARG_HASHTAG = "hashtag"
+        const val ARG_INVALIDATE_CACHE = "invalidate-cache"
 
         @JvmStatic
-        fun newInstance(listType: ListType, user: User? = null, hashtag: String? = null) =
+        fun newInstance(listType: ListType, invalidateCache: Boolean = false,
+                        user: User? = null, hashtag: String? = null) =
             MainFragment().apply {
                 arguments = Bundle().apply {
                     putSerializable(ARG_ADAPTER_TYPE, listType)
+                    putBoolean(ARG_INVALIDATE_CACHE, invalidateCache)
                     putSerializable(ARG_USER, user)
                     putString(ARG_HASHTAG, hashtag)
                 }

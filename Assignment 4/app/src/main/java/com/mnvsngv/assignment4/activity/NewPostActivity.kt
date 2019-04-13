@@ -1,6 +1,7 @@
 package com.mnvsngv.assignment4.activity
 
 import android.animation.ObjectAnimator
+import android.app.Activity
 import android.net.Uri
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
@@ -46,8 +47,11 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
     }
 
     override fun onUploadSuccess() {
+        if (photoUri.authority == "com.mnvsngv.assignment4.fileprovider") {
+            contentResolver.delete(photoUri, null, null)
+        }
+        setResult(Activity.RESULT_OK)
         uploadProgressBar.visibility = View.INVISIBLE
-        contentResolver.delete(photoUri, null, null)
         finish()
     }
 

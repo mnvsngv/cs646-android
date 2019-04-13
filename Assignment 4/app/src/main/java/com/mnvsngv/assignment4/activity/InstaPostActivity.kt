@@ -25,7 +25,7 @@ import kotlinx.android.synthetic.main.activity_instapost.*
 import org.jetbrains.anko.clearTop
 import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
-import org.jetbrains.anko.startActivity
+import org.jetbrains.anko.startActivityForResult
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,12 +33,14 @@ import java.util.*
 
 private const val CAPTURE_IMAGE = 1
 private const val PICK_IMAGE = 2
+private const val UPLOAD_IMAGE = 3
 private const val TAG = "instapost"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
 
     private val selectedItemKey = "selected-item"
     private val fragmentCache = mutableMapOf<ListType, MainFragment>()
+    private var currentListType: ListType? = null
     private var backend = BackendInstance.getInstance(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -107,8 +109,9 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if (resultCode == RESULT_OK) {
             when (requestCode) {
-                CAPTURE_IMAGE -> startActivity<NewPostActivity>(URI_KEY to AddPost.photoURI)
-                PICK_IMAGE -> startActivity<NewPostActivity>(URI_KEY to data?.data)
+                CAPTURE_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to AddPost.photoURI)
+                PICK_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to data?.data)
+                UPLOAD_IMAGE -> fragmentCache[currentListType]?.refreshPosts()
             }
         }
     }
@@ -138,13 +141,18 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         false
     }
 
-    private fun replaceFragmentWith(listType: ListType) {
-        val fragment = fragmentCache.getOrElse(listType) {
-            Log.i(TAG, "$listType not cached!")
-            progressBar.visibility = View.VISIBLE
-            val fragment = MainFragment.newInstance(listType)
-            fragmentCache[listType] = fragment
-            fragment
+    private fun replaceFragmentWith(listType: ListType, invalidateCache: Boolean = false) {
+        currentListType = listType
+        val fragment = if (invalidateCache) {
+            MainFragment.newInstance(listType)
+        } else {
+            fragmentCache.getOrElse(listType) {
+                Log.i(TAG, "$listType not cached!")
+                progressBar.visibility = View.VISIBLE
+                val fragment = MainFragment.newInstance(listType)
+                fragmentCache[listType] = fragment
+                fragment
+            }
         }
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.fragmentContainer, fragment)
