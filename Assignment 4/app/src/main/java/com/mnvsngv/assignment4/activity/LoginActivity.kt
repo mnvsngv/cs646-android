@@ -43,12 +43,6 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
         passwordInput.setOnEditorActionListener(this)
     }
 
-    override fun onResume() {
-        super.onResume()
-        backend = BackendInstance.getInstance(this, this)
-
-    }
-
     private fun areInputsValid(): Boolean {
 
         var isValid = validate(emailInput, R.string.invalid_email) {

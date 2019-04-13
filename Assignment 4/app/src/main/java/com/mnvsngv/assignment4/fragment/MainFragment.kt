@@ -62,7 +62,7 @@ class MainFragment : Fragment(), IBackendListener,
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         listener = context as OnFragmentInteractionListener
-        backend = BackendInstance.getInstance(context as Activity, this)
+//        backend = BackendInstance.getInstance(context as Activity, this)
     }
 
     override fun onCreateView(
@@ -172,27 +172,22 @@ class MainFragment : Fragment(), IBackendListener,
     }
 
     fun refreshPostsFor(user: User) {
-        backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllPostsFor(user)
     }
 
     fun refreshPostsFor(hashtag: String) {
-        backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllPostsFor(hashtag)
     }
 
     fun refreshPosts() {
-        backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllPosts()
     }
 
     fun refreshHashtags() {
-        backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllHashtags()
     }
 
     fun refreshUsers() {
-        backend = BackendInstance.getInstance(context as Activity, this)
         backend.getAllUsers()
     }
 
