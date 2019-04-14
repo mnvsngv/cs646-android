@@ -13,8 +13,6 @@ import com.mnvsngv.assignment4.data.Post
 import kotlinx.android.synthetic.main.fragment_post.view.*
 
 
-private const val TAG = "PostAdapter"
-
 class PostRecyclerViewAdapter(private val posts: List<Post>) :
         RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>() {
 
@@ -29,7 +27,6 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
         holder.userIDView.text = post.userID
         holder.captionView.text = post.caption
 
-        // TODO Replace with AsyncTask
         Glide.with(holder.view).load(post.uriString).into(holder.photoView)
 
         with(holder.view) {
@@ -38,6 +35,7 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
     }
 
     override fun getItemCount(): Int = posts.size
+
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val userIDView: TextView = view.user_id

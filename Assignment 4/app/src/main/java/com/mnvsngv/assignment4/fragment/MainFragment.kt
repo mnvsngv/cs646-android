@@ -27,8 +27,6 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
-private const val TAG = "MainFragment"
-
 class MainFragment : Fragment(), IBackendListener,
     UserRecyclerViewAdapter.UserAdapterOnClickListener,
     HashtagRecyclerViewAdapter.HashtagAdapterOnClickListener {
@@ -61,7 +59,6 @@ class MainFragment : Fragment(), IBackendListener,
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         listener = context as OnFragmentInteractionListener
-//        backend = BackendInstance.getInstance(context as Activity, this)
     }
 
     override fun onCreateView(

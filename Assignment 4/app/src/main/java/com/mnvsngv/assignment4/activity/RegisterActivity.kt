@@ -16,6 +16,7 @@ import com.mnvsngv.assignment4.singleton.BackendInstance
 import kotlinx.android.synthetic.main.activity_register.*
 
 class RegisterActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
+
     private val backend = BackendInstance.getInstance(this, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,39 +33,11 @@ class RegisterActivity : AppCompatActivity(), IBackendListener, TextView.OnEdito
             }
         }
 
+        // Initiate registration when the user presses enter when on the confirm password field
         confirmPasswordInput.setOnEditorActionListener(this)
+
+        // Show the back arrow on the action bar
         actionBar?.setDisplayHomeAsUpEnabled(true)
-    }
-
-    private fun areInputsValid(): Boolean {
-
-        var isValid = validate(emailInput, R.string.invalid_email) {
-            TextUtils.isEmpty(it) || !Patterns.EMAIL_ADDRESS.matcher(it).matches()
-        }
-
-        val emptyValidationInputs =
-            mapOf(userIDInput to R.string.invalid_user_id,
-                nameInput to R.string.invalid_name,
-                passwordInput to R.string.invalid_password,
-                confirmPasswordInput to R.string.invalid_confirm_password)
-
-        for ((input, errorID) in emptyValidationInputs) {
-            isValid = validate(input, errorID) {
-                TextUtils.isEmpty(it)
-            } && isValid
-        }
-
-        return isValid
-    }
-
-    private fun validate(view: TextView, errorMessageID: Int, isInvalid: (String) -> Boolean): Boolean {
-        val textToValidate = view.text.toString()
-        if (isInvalid(textToValidate)) {
-            view.error = getString(errorMessageID)
-            return false
-        }
-
-        return true
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
@@ -96,5 +69,34 @@ class RegisterActivity : AppCompatActivity(), IBackendListener, TextView.OnEdito
     override fun onRegisterFailure(messageID: Int) {
         progressBar.visibility = View.INVISIBLE
         Toast.makeText(this, messageID, Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun areInputsValid(): Boolean {
+        var isValid = validate(emailInput, R.string.invalid_email) {
+            TextUtils.isEmpty(it) || !Patterns.EMAIL_ADDRESS.matcher(it).matches()
+        }
+
+        val emptyValidationInputs =
+            mapOf(userIDInput to R.string.invalid_user_id,
+                nameInput to R.string.invalid_name,
+                passwordInput to R.string.invalid_password,
+                confirmPasswordInput to R.string.invalid_confirm_password)
+
+        for ((input, errorID) in emptyValidationInputs) {
+            isValid = validate(input, errorID) {
+                TextUtils.isEmpty(it)
+            } && isValid
+        }
+
+        return isValid
+    }
+
+    private fun validate(view: TextView, errorMessageID: Int, isInvalid: (String) -> Boolean): Boolean {
+        val textToValidate = view.text.toString()
+        return if (isInvalid(textToValidate)) {
+            view.error = getString(errorMessageID)
+            false
+        } else true
     }
 }

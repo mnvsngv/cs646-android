@@ -33,7 +33,6 @@ import java.util.*
 private const val CAPTURE_IMAGE = 1
 private const val PICK_IMAGE = 2
 private const val UPLOAD_IMAGE = 3
-private const val TAG = "instapost"
 
 class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.OnFragmentInteractionListener {
 
@@ -41,79 +40,6 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
     private val fragmentCache = mutableMapOf<ListType, MainFragment>()
     private var currentListType: ListType? = null
     private var backend = BackendInstance.getInstance(this, this)
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setContentView(com.mnvsngv.assignment4.R.layout.activity_instapost)
-
-        actionBar?.title = getString(R.string.app_name)
-        supportActionBar?.title = getString(R.string.app_name)
-        navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
-
-        takePhotoFab.setOnClickListener {
-            AddPost.captureImageForNewPost(this)
-        }
-
-        addFromGalleryFab.setOnClickListener {
-            AddPost.fromGallery(this)
-        }
-
-        replaceFragmentWith(ListType.POSTS)
-    }
-
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putInt(selectedItemKey, navigation.selectedItemId)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
-        super.onRestoreInstanceState(savedInstanceState)
-        savedInstanceState?.getInt(selectedItemKey)?.let { navigation.selectedItemId = it }
-    }
-
-    // Add the logout button to the action bar
-    override fun onCreateOptionsMenu(menu: Menu): Boolean {
-        val inflater: MenuInflater = menuInflater
-        inflater.inflate(R.menu.logout, menu)
-        return true
-    }
-
-    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
-        R.id.logout_button -> {
-            backend.logout()
-            true
-        }
-
-        else -> {
-            // If we got here, the user's action was not recognized.
-            // Invoke the superclass to handle it.
-            super.onOptionsItemSelected(item)
-        }
-    }
-
-    override fun onLogout() {
-        startActivity(intentFor<LoginActivity>().newTask().clearTop())
-        finish()
-    }
-
-    override fun onFinishedLoading(hasPosts: Boolean) {
-        progressBar.visibility = View.INVISIBLE
-        if (hasPosts) {
-            noPostsText.visibility = View.INVISIBLE
-        } else {
-            noPostsText.visibility = View.VISIBLE
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (resultCode == RESULT_OK) {
-            when (requestCode) {
-                CAPTURE_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to AddPost.photoURI)
-                PICK_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to data?.data)
-                UPLOAD_IMAGE -> fragmentCache[currentListType]?.refreshPosts()
-            }
-        }
-    }
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
         noPostsText.visibility = View.INVISIBLE
@@ -140,6 +66,90 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         false
     }
 
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_instapost)
+
+        actionBar?.title = getString(R.string.app_name)
+        supportActionBar?.title = getString(R.string.app_name)
+
+        // Enable functionality for the bottom navbar
+        navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
+
+        takePhotoFab.setOnClickListener {
+            AddPost.captureImageForNewPost(this)
+        }
+
+        addFromGalleryFab.setOnClickListener {
+            AddPost.fromGallery(this)
+        }
+
+        // Load up posts when the activity starts up for the first time
+        replaceFragmentWith(ListType.POSTS)
+    }
+
+    // Preserve which tab the user was in when returning from other activities
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putInt(selectedItemKey, navigation.selectedItemId)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle?) {
+        super.onRestoreInstanceState(savedInstanceState)
+        savedInstanceState?.getInt(selectedItemKey)?.let { navigation.selectedItemId = it }
+    }
+
+    // Add the logout button to the action bar
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
+        val inflater: MenuInflater = menuInflater
+        inflater.inflate(R.menu.logout, menu)
+        return true
+    }
+
+    // Handle logout
+    override fun onOptionsItemSelected(item: MenuItem) = when (item.itemId) {
+        R.id.logout_button -> {
+            backend.logout()
+            true
+        }
+
+        else -> {
+            // If we got here, the user's action was not recognized.
+            // Invoke the superclass to handle it.
+            super.onOptionsItemSelected(item)
+        }
+    }
+
+    override fun onLogout() {
+        // Flags help ensure that the user can't press back to reopen this activity
+        startActivity(intentFor<LoginActivity>().newTask().clearTop())
+        finish()
+    }
+
+    override fun onFinishedLoading(hasPosts: Boolean) {
+        progressBar.visibility = View.INVISIBLE
+        if (hasPosts) {
+            noPostsText.visibility = View.INVISIBLE
+        } else {
+            noPostsText.visibility = View.VISIBLE
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (resultCode == RESULT_OK) {
+            when (requestCode) {
+                // We got an image from the camera:
+                CAPTURE_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to AddPost.photoUri)
+                // We got an image from the gallery:
+                PICK_IMAGE -> startActivityForResult<NewPostActivity>(UPLOAD_IMAGE, URI_KEY to data?.data)
+                // Once the upload ends:
+                UPLOAD_IMAGE -> fragmentCache[currentListType]?.refreshPosts()
+            }
+        }
+    }
+
+
     private fun replaceFragmentWith(listType: ListType) {
         currentListType = listType
         val fragment = fragmentCache.getOrElse(listType) {
@@ -153,8 +163,10 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
         transaction.commit()
     }
 
+
+    // Helper object to get an image from the camera
     private object AddPost {
-        lateinit var photoURI: Uri
+        lateinit var photoUri: Uri
 
         fun captureImageForNewPost(activity: Activity) {
 
@@ -164,10 +176,10 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
                     val photoURI: Uri = FileProvider.getUriForFile(
                         activity,
                         "com.mnvsngv.assignment4.fileprovider",
-                        AddPost.createImageFile(activity)
+                        createImageFile(activity)
                     )
 
-                    this.photoURI = photoURI
+                    this.photoUri = photoURI
 
                     takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                     activity.startActivityForResult(takePictureIntent, CAPTURE_IMAGE)
@@ -180,11 +192,7 @@ class InstaPostActivity : AppCompatActivity(), IBackendListener, MainFragment.On
             // Create an image file name
             val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.getDefault()).format(Date())
             val storageDir: File? = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES)
-            return File.createTempFile(
-                "JPEG_${timeStamp}_", /* prefix */
-                ".jpg", /* suffix */
-                storageDir /* directory */
-            )
+            return File.createTempFile("JPEG_${timeStamp}_", ".jpg", storageDir)
         }
 
         fun fromGallery(activity: Activity) {

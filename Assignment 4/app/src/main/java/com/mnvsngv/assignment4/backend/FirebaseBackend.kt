@@ -15,7 +15,6 @@ import com.mnvsngv.assignment4.data.Post
 import com.mnvsngv.assignment4.data.User
 
 
-private const val TAG = "FirebaseBackend"
 private const val USERS_COLLECTION = "Users"
 private const val POSTS_COLLECTION = "Posts"
 private const val HASHTAGS_COLLECTION = "Hashtags"
@@ -25,6 +24,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
     private val storage = FirebaseStorage.getInstance()
+
 
     override fun login(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
@@ -71,6 +71,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                 listener.onUpdateUploadProgress(progress.toInt())
             }
             .continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> {
+                // Convert Task<Uri> result into the actual Uri result
                 return@Continuation photoRef.downloadUrl
             })
             .addOnCompleteListener {
@@ -78,6 +79,7 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
                 post.uriString = it.result.toString()
 
                 for (hashtag in hashtags) {
+                    // Using SetOptions.merge() so new posts are added to existing hashtags
                     db.collection(HASHTAGS_COLLECTION).document(hashtag)
                         .set(mapOf(post.photoFileName to ""), SetOptions.merge())
                 }
@@ -168,14 +170,14 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
             }
     }
 
+
     private fun registerAndCreateUser(email: String, userID: String, name: String) {
-        // Create a new user with a first and last name
-        val user = HashMap<String, Any>()
+        val user = HashMap<String, String>()
         user["email"] = email
         user["userID"] = userID
         user["name"] = name
 
-        // Add a new document with a generated ID
+        // Add the user to Firebase
         db.collection(USERS_COLLECTION).document(email)
             .set(user)
             .addOnSuccessListener {
@@ -216,14 +218,15 @@ class FirebaseBackend(private val baseActivity: Activity, var listener: IBackend
     }
 
     private fun getUserData(userID: String) {
-        val docRef = db.collection(USERS_COLLECTION).document(userID)
-        docRef.get()
+        db.collection(USERS_COLLECTION).document(userID)
+            .get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     currentUser = document.toObject(User::class.java)
                 }
             }
     }
+
 
     private companion object {
         private var currentUser: User? = null
