@@ -19,7 +19,7 @@ private const val USERS_COLLECTION = "Users"
 private const val POSTS_COLLECTION = "Posts"
 private const val HASHTAGS_COLLECTION = "Hashtags"
 
-class FirebaseBackend(private val baseActivity: Activity, var listener: IBackendListener): IBackend {
+class FirebaseBackend(private val baseActivity: Activity, private var listener: IBackendListener): IBackend {
 
     private val auth = FirebaseAuth.getInstance()
     private val db = FirebaseFirestore.getInstance()
