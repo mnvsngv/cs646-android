@@ -27,8 +27,6 @@ import org.jetbrains.anko.support.v4.intentFor
 import org.jetbrains.anko.support.v4.startActivity
 
 
-private const val TAG = "MainFragment"
-
 class MainFragment : Fragment(), IBackendListener,
     UserRecyclerViewAdapter.UserAdapterOnClickListener,
     HashtagRecyclerViewAdapter.HashtagAdapterOnClickListener {
@@ -168,11 +166,11 @@ class MainFragment : Fragment(), IBackendListener,
         startActivity<HashtagPostsActivity>(ARG_HASHTAG to hashtag)
     }
 
-    fun refreshPostsFor(user: User) {
+    private fun refreshPostsFor(user: User) {
         backend.getAllPostsFor(user)
     }
 
-    fun refreshPostsFor(hashtag: String) {
+    private fun refreshPostsFor(hashtag: String) {
         backend.getAllPostsFor(hashtag)
     }
 
@@ -180,11 +178,11 @@ class MainFragment : Fragment(), IBackendListener,
         backend.getAllPosts()
     }
 
-    fun refreshHashtags() {
+    private fun refreshHashtags() {
         backend.getAllHashtags()
     }
 
-    fun refreshUsers() {
+    private fun refreshUsers() {
         backend.getAllUsers()
     }
 
