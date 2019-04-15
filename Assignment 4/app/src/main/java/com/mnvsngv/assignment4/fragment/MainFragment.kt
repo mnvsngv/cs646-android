@@ -59,7 +59,6 @@ class MainFragment : Fragment(), IBackendListener,
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         listener = context as OnFragmentInteractionListener
-//        backend = BackendInstance.getInstance(context as Activity, this)
     }
 
     override fun onCreateView(

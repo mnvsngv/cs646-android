@@ -18,8 +18,6 @@ import java.io.InputStream
 import java.lang.ref.WeakReference
 
 
-private const val TAG = "PostAdapter"
-
 class PostRecyclerViewAdapter(private val posts: List<Post>) :
         RecyclerView.Adapter<PostRecyclerViewAdapter.ViewHolder>() {
 
@@ -34,7 +32,7 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
         holder.userIDView.text = post.userID
         holder.captionView.text = post.caption
 
-
+        // TODO Replace with AsyncTask
         Glide.with(holder.view).load(post.uriString).into(holder.photoView)
 //        DownloadImageTask(holder.photoView).execute(post.uriString)
 
@@ -44,6 +42,7 @@ class PostRecyclerViewAdapter(private val posts: List<Post>) :
     }
 
     override fun getItemCount(): Int = posts.size
+
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val userIDView: TextView = view.user_id

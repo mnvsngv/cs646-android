@@ -21,10 +21,10 @@ class UserRecyclerViewAdapter(
 
     init {
         onClickListener = View.OnClickListener { v ->
-            val user = v.tag as User
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            listener.handleUserClicked(user)
+            val user = v.tag
+            if (user is User) {
+                listener.handleUserClicked(user)
+            }
         }
     }
 
@@ -44,11 +44,14 @@ class UserRecyclerViewAdapter(
         }
     }
 
+    override fun getItemCount(): Int = users.size
+
+
     interface UserAdapterOnClickListener {
         fun handleUserClicked(user: User)
+
     }
 
-    override fun getItemCount(): Int = users.size
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val userIDView: TextView = view.user_id

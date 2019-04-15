@@ -8,6 +8,7 @@ import android.widget.TextView
 import com.mnvsngv.assignment4.R
 import kotlinx.android.synthetic.main.fragment_hashtag.view.*
 
+
 class HashtagRecyclerViewAdapter(
     private val hashtags: List<String>,
     private val listener: HashtagAdapterOnClickListener
@@ -17,10 +18,10 @@ class HashtagRecyclerViewAdapter(
 
     init {
         onClickListener = View.OnClickListener { v ->
-            val hashtag = v.tag as String
-            // Notify the active callbacks interface (the activity, if the fragment is attached to
-            // one) that an item has been selected.
-            listener.handleHashtagClicked(hashtag)
+            val hashtag = v.tag
+            if (hashtag is String) {
+                listener.handleHashtagClicked(hashtag)
+            }
         }
     }
 
@@ -40,11 +41,13 @@ class HashtagRecyclerViewAdapter(
         }
     }
 
+    override fun getItemCount(): Int = hashtags.size
+
+
     interface HashtagAdapterOnClickListener {
         fun handleHashtagClicked(hashtag: String)
     }
 
-    override fun getItemCount(): Int = hashtags.size
 
     inner class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
         val hashtagView: TextView = view.hashtag

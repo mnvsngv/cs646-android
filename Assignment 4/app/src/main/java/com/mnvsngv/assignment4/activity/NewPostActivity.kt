@@ -18,12 +18,14 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
     private val backend = BackendInstance.getInstance(this, this)
     private lateinit var photoUri: Uri
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_new_post)
 
         photoUri = intent.getParcelableExtra(URI_KEY)
         postImage.setImageURI(photoUri)
+
         submitPostButton.setOnClickListener {
             val currentUser = backend.getCurrentUser()
             if (currentUser != null) {
@@ -48,12 +50,15 @@ class NewPostActivity : AppCompatActivity(), IBackendListener {
 
     override fun onUploadSuccess() {
         if (photoUri.authority == "com.mnvsngv.assignment4.fileprovider") {
+            // Clean up after upload
             contentResolver.delete(photoUri, null, null)
         }
+
         setResult(Activity.RESULT_OK)
         uploadProgressBar.visibility = View.INVISIBLE
         finish()
     }
+
 
     private fun findHashtagsIn(caption: String): List<String> {
         val hashtags = arrayListOf<String>()

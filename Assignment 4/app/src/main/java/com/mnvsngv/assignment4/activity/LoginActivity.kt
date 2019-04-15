@@ -18,15 +18,18 @@ import org.jetbrains.anko.intentFor
 import org.jetbrains.anko.newTask
 import org.jetbrains.anko.startActivity
 
-private const val TAG = "LoginActivity"
-
 class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorActionListener {
-    private var backend = BackendInstance.getInstance(this, this)
+
+    private val backend = BackendInstance.getInstance(this, this)
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
 
+        // If the previous user is still logged in then don't show the login screen.
+        // This can be the case when the app is destroyed & recreated when the user presses the back button
+        // after logging in.
         if (backend.getCurrentUser() != null) onLoginSuccess()
 
         loginButton.setOnClickListener {
@@ -40,32 +43,11 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
             startActivity<RegisterActivity>()
         }
 
+        // Initiate login when the user presses enter when on the password field
         passwordInput.setOnEditorActionListener(this)
     }
 
-    private fun areInputsValid(): Boolean {
-
-        var isValid = validate(emailInput, R.string.invalid_email) {
-            TextUtils.isEmpty(it) || !Patterns.EMAIL_ADDRESS.matcher(it).matches()
-        }
-
-        isValid = validate(passwordInput, R.string.invalid_password) {
-            TextUtils.isEmpty(it)
-        } && isValid
-
-        return isValid
-    }
-
-    private fun validate(view: TextView, errorMessageID: Int, isInvalid: (String) -> Boolean): Boolean {
-        val textToValidate = view.text.toString()
-        if (isInvalid(textToValidate)) {
-            view.error = getString(errorMessageID)
-            return false
-        }
-
-        return true
-    }
-
+    // Handle ENTER button pressed on the password field
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_GO) {
             progressBar.visibility = View.VISIBLE
@@ -85,5 +67,30 @@ class LoginActivity : AppCompatActivity(), IBackendListener, TextView.OnEditorAc
     override fun onLoginFailure(messageID: Int) {
         progressBar.visibility = View.INVISIBLE
         Toast.makeText(this, messageID, Toast.LENGTH_SHORT).show()
+    }
+
+
+    private fun areInputsValid(): Boolean {
+        var isValid = validate(emailInput, R.string.invalid_email) {
+            TextUtils.isEmpty(it) || !Patterns.EMAIL_ADDRESS.matcher(it).matches()
+        }
+
+        // The validate() call is done before the AND with isValid.
+        // This is because if isValid is false, then validate() is not called as a "shortcut".
+        // In that case the user would not see all the invalid inputs at the same time.
+        isValid = validate(passwordInput, R.string.invalid_password) {
+            TextUtils.isEmpty(it)
+        } && isValid
+
+        return isValid
+    }
+
+    // Run an invalidation test on a given text field
+    private fun validate(view: TextView, errorMessageID: Int, isInvalid: (String) -> Boolean): Boolean {
+        val textToValidate = view.text.toString()
+        return if (isInvalid(textToValidate)) {
+            view.error = getString(errorMessageID)
+            false
+        } else true
     }
 }
